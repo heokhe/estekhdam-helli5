@@ -1,6 +1,6 @@
-import { CssBaseline } from "@mui/material";
-import { json } from "@remix-run/node";
-import { ThemeProvider } from "@mui/material/styles";
+import { CssBaseline } from '@mui/material';
+import { json } from '@remix-run/node';
+import { ThemeProvider } from '@mui/material/styles';
 import {
   Links,
   LiveReload,
@@ -8,15 +8,15 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-} from "@remix-run/react";
-import { CacheProvider } from "@emotion/react";
-import { getUser } from "./session.server";
-import { cacheRtl, theme } from "./theme";
+} from '@remix-run/react';
+import { CacheProvider } from '@emotion/react';
+import { getUser } from './session.server';
+import { cacheRtl, theme } from './theme';
 
 export const meta = () => ({
-  charset: "utf-8",
-  title: "Remix Notes",
-  viewport: "width=device-width,initial-scale=1",
+  charset: 'utf-8',
+  title: 'Remix Notes',
+  viewport: 'width=device-width,initial-scale=1',
 });
 
 export async function loader({ request }) {

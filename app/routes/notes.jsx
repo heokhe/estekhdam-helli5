@@ -1,9 +1,9 @@
-import { json } from "@remix-run/node";
-import { Form, Link, NavLink, Outlet, useLoaderData } from "@remix-run/react";
+import { json } from '@remix-run/node';
+import { Form, Link, NavLink, Outlet, useLoaderData } from '@remix-run/react';
 
-import { requireUserId } from "~/session.server";
-import { useUser } from "~/utils";
-import { getNoteListItems } from "~/models/note.server";
+import { requireUserId } from '~/session.server';
+import { useUser } from '~/utils';
+import { getNoteListItems } from '~/models/note.server';
 
 export async function loader({ request }) {
   const userId = await requireUserId(request);
@@ -48,7 +48,7 @@ export default function NotesPage() {
                 <li key={note.id}>
                   <NavLink
                     className={({ isActive }) =>
-                      `block border-b p-4 text-xl ${isActive ? "bg-white" : ""}`
+                      `block border-b p-4 text-xl ${isActive ? 'bg-white' : ''}`
                     }
                     to={note.id}
                   >

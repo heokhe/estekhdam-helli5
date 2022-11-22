@@ -1,6 +1,6 @@
-import bcrypt from "bcryptjs";
+import bcrypt from 'bcryptjs';
 
-import { prisma } from "~/db.server";
+import { prisma } from '~/db.server';
 
 export async function getUserById(id) {
   return prisma.user.findUnique({ where: { id } });
@@ -43,7 +43,7 @@ export async function verifyLogin(email, password) {
 
   const isValid = await bcrypt.compare(
     password,
-    userWithPassword.password.hash
+    userWithPassword.password.hash,
   );
 
   if (!isValid) {

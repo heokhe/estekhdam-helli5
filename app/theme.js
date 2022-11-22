@@ -1,12 +1,12 @@
-import { createTheme } from "@mui/material/styles";
-import rtlPlugin from "stylis-plugin-rtl";
-import createCache from "@emotion/cache";
-import { prefixer } from "stylis";
+import { createTheme } from '@mui/material/styles';
+import rtlPlugin from 'stylis-plugin-rtl';
+import createCache from '@emotion/cache';
+import { prefixer } from 'stylis';
 
 export const theme = createTheme({
-  direction: "rtl",
+  direction: 'rtl',
   typography: {
-    fontFamily: "Estedad",
+    fontFamily: 'Estedad',
   },
   palette: {
     background: {
@@ -16,6 +16,6 @@ export const theme = createTheme({
 });
 
 export const cacheRtl = createCache({
-  key: "muirtl",
+  key: 'muirtl',
   stylisPlugins: [prefixer, rtlPlugin],
 });

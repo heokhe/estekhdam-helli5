@@ -1,7 +1,7 @@
-require("@testing-library/cypress/add-commands");
-require("./commands");
+require('@testing-library/cypress/add-commands');
+require('./commands');
 
-Cypress.on("uncaught:exception", (err) => {
+Cypress.on('uncaught:exception', (err) => {
   // Cypress and React Hydrating the document don't get along
   // for some unknown reason. Hopefully we figure out why eventually
   // so we can remove this.

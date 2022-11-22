@@ -1,7 +1,7 @@
-import path from "path";
-import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
-import { prisma } from "~/db.server";
-import { z } from "zod";
+import path from 'path';
+import { Form, Link, useActionData, useLoaderData } from '@remix-run/react';
+import { prisma } from '~/db.server';
+import { z } from 'zod';
 import {
   Button,
   Container,
@@ -11,17 +11,17 @@ import {
   TextField,
   Stack,
   Breadcrumbs,
-} from "@mui/material";
-import ArrowForward from "@mui/icons-material/ArrowForward";
+} from '@mui/material';
+import ArrowForward from '@mui/icons-material/ArrowForward';
 import {
   json,
   redirect,
   unstable_composeUploadHandlers,
   unstable_createMemoryUploadHandler,
   unstable_parseMultipartFormData,
-} from "@remix-run/server-runtime";
-import { unstable_createFileUploadHandler } from "@remix-run/node";
-import { useEffect } from "react";
+} from '@remix-run/server-runtime';
+import { unstable_createFileUploadHandler } from '@remix-run/node';
+import { useEffect } from 'react';
 
 export async function loader({ params }) {
   const categoryId = parseInt(params.categoryId);
@@ -38,7 +38,7 @@ export async function loader({ params }) {
     },
   });
   if (!category.data) {
-    throw redirect("/");
+    throw redirect('/');
   }
   let temp = category;
   const list = [category];
@@ -71,30 +71,30 @@ export async function action({ request, params }) {
   const uploadHandler = unstable_composeUploadHandlers(
     unstable_createFileUploadHandler({
       maxPartSize: 5_000_000,
-      filter: ({ contentType }) => contentType === "application/pdf",
-      directory: "public/cvs",
+      filter: ({ contentType }) => contentType === 'application/pdf',
+      directory: 'public/cvs',
       file: () => `cv-${Date.now()}.pdf`,
     }),
     // parse everything else into memory
-    unstable_createMemoryUploadHandler()
+    unstable_createMemoryUploadHandler(),
   );
   const formData = await unstable_parseMultipartFormData(
     request,
-    uploadHandler
+    uploadHandler,
   );
-  const name = formData.get("name");
-  const lastName = formData.get("lastName");
-  const email = formData.get("email");
-  const phoneNumber = formData.get("phoneNumber");
-  const cv = formData.get("cv");
+  const name = formData.get('name');
+  const lastName = formData.get('lastName');
+  const email = formData.get('email');
+  const phoneNumber = formData.get('phoneNumber');
+  const cv = formData.get('cv');
 
   try {
     z.object({
-      name: z.string().min(1, "نام نباید خالی باشد"),
-      lastName: z.string().min(1, "نام خانوادگی نباید خالی باشد"),
+      name: z.string().min(1, 'نام نباید خالی باشد'),
+      lastName: z.string().min(1, 'نام خانوادگی نباید خالی باشد'),
       email: z
         .string()
-        .email({ message: "آدرس ایمیل معتبر نیست" })
+        .email({ message: 'آدرس ایمیل معتبر نیست' })
         .or(z.string().max(0)),
       phoneNumber: z.string(), // TODO
     }).parse({
@@ -108,8 +108,8 @@ export async function action({ request, params }) {
   }
   if (!category.data.requiresCV && !cv.name) {
     throw json(
-      { errors: [{ message: "ارسال فایل رزومه الزامی است" }] },
-      { status: 400 }
+      { errors: [{ message: 'ارسال فایل رزومه الزامی است' }] },
+      { status: 400 },
     );
   }
   // const cvRelativePath = path.relative(
@@ -117,8 +117,8 @@ export async function action({ request, params }) {
   //   cv.filepath
   // );
 
-  const answerEntries = [...formData.entries("answer")].filter(([fieldName]) =>
-    fieldName.startsWith("answer-")
+  const answerEntries = [...formData.entries('answer')].filter(([fieldName]) =>
+    fieldName.startsWith('answer-'),
   );
 
   const application = await prisma.application.create({
@@ -134,12 +134,12 @@ export async function action({ request, params }) {
   for (const question of category.data.questions) {
     const [, answerValue] =
       answerEntries.find(
-        ([fieldName]) => fieldName === `answer-${question.id}`
+        ([fieldName]) => fieldName === `answer-${question.id}`,
       ) ?? [];
     if (!answerValue) {
       throw json(
         { errors: [{ message: `لطفاً به تمام سوالات پاسخ دهید` }] },
-        { status: 400 }
+        { status: 400 },
       );
     }
     await prisma.answer.create({
@@ -159,7 +159,7 @@ export async function action({ request, params }) {
     });
   }
 
-  return redirect("/application/done");
+  return redirect('/application/done');
 }
 
 export default function ApplicationForm() {
@@ -177,9 +177,9 @@ export default function ApplicationForm() {
       <Toolbar
         sx={{
           borderBottom: 1,
-          borderColor: "divider",
-          maxWidth: "sm",
-          mx: "auto",
+          borderColor: 'divider',
+          maxWidth: 'sm',
+          mx: 'auto',
         }}
       >
         <IconButton edge="start" component={Link} to="/" sx={{ mr: 2 }}>
@@ -235,13 +235,13 @@ export default function ApplicationForm() {
           <Stack gap={1} sx={{ mt: 2 }}>
             <Typography variant="caption" color="text.secondary">
               {!requiresCv
-                ? "در صورت تمایل می‌توانید فایل رزومه خود را نیز ارسال کنید."
-                : "لطفا از بخش زیر فایل رزومه خود را نیز ضمیمه کنید."}
+                ? 'در صورت تمایل می‌توانید فایل رزومه خود را نیز ارسال کنید.'
+                : 'لطفا از بخش زیر فایل رزومه خود را نیز ضمیمه کنید.'}
             </Typography>
             <input type="file" name="cv" accept=".pdf" required={requiresCv} />
           </Stack>
           <Button
-            sx={{ mx: "auto", mt: 3, display: "block" }}
+            sx={{ mx: 'auto', mt: 3, display: 'block' }}
             type="submit"
             variant="contained"
             disableElevation

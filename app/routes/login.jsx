@@ -1,42 +1,42 @@
-import { json, redirect } from "@remix-run/node";
-import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
-import * as React from "react";
+import { json, redirect } from '@remix-run/node';
+import { Form, Link, useActionData, useSearchParams } from '@remix-run/react';
+import * as React from 'react';
 
-import { createUserSession, getUserId } from "~/session.server";
-import { verifyLogin } from "~/models/user.server";
-import { safeRedirect, validateEmail } from "~/utils";
+import { createUserSession, getUserId } from '~/session.server';
+import { verifyLogin } from '~/models/user.server';
+import { safeRedirect, validateEmail } from '~/utils';
 
 export async function loader({ request }) {
   const userId = await getUserId(request);
-  if (userId) return redirect("/");
+  if (userId) return redirect('/');
   return json({});
 }
 
 export async function action({ request }) {
   const formData = await request.formData();
-  const email = formData.get("email");
-  const password = formData.get("password");
-  const redirectTo = safeRedirect(formData.get("redirectTo"), "/notes");
-  const remember = formData.get("remember");
+  const email = formData.get('email');
+  const password = formData.get('password');
+  const redirectTo = safeRedirect(formData.get('redirectTo'), '/notes');
+  const remember = formData.get('remember');
 
   if (!validateEmail(email)) {
     return json(
-      { errors: { email: "Email is invalid", password: null } },
-      { status: 400 }
+      { errors: { email: 'Email is invalid', password: null } },
+      { status: 400 },
     );
   }
 
-  if (typeof password !== "string" || password.length === 0) {
+  if (typeof password !== 'string' || password.length === 0) {
     return json(
-      { errors: { email: null, password: "Password is required" } },
-      { status: 400 }
+      { errors: { email: null, password: 'Password is required' } },
+      { status: 400 },
     );
   }
 
   if (password.length < 8) {
     return json(
-      { errors: { email: null, password: "Password is too short" } },
-      { status: 400 }
+      { errors: { email: null, password: 'Password is too short' } },
+      { status: 400 },
     );
   }
 
@@ -44,28 +44,28 @@ export async function action({ request }) {
 
   if (!user) {
     return json(
-      { errors: { email: "Invalid email or password", password: null } },
-      { status: 400 }
+      { errors: { email: 'Invalid email or password', password: null } },
+      { status: 400 },
     );
   }
 
   return createUserSession({
     request,
     userId: user.id,
-    remember: remember === "on" ? true : false,
+    remember: remember === 'on' ? true : false,
     redirectTo,
   });
 }
 
 export const meta = () => {
   return {
-    title: "Login",
+    title: 'Login',
   };
 };
 
 export default function LoginPage() {
   const [searchParams] = useSearchParams();
-  const redirectTo = searchParams.get("redirectTo") || "/notes";
+  const redirectTo = searchParams.get('redirectTo') || '/notes';
   const actionData = useActionData();
   const emailRef = React.useRef(null);
   const passwordRef = React.useRef(null);
@@ -162,11 +162,11 @@ export default function LoginPage() {
               </label>
             </div>
             <div className="text-center text-sm text-gray-500">
-              Don't have an account?{" "}
+              Don't have an account?{' '}
               <Link
                 className="text-blue-500 underline"
                 to={{
-                  pathname: "/join",
+                  pathname: '/join',
                   search: searchParams.toString(),
                 }}
               >

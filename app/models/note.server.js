@@ -1,4 +1,4 @@
-import { prisma } from "~/db.server";
+import { prisma } from '~/db.server';
 
 export function getNote({ id, userId }) {
   return prisma.note.findFirst({
@@ -11,7 +11,7 @@ export function getNoteListItems({ userId }) {
   return prisma.note.findMany({
     where: { userId },
     select: { id: true, title: true },
-    orderBy: { updatedAt: "desc" },
+    orderBy: { updatedAt: 'desc' },
   });
 }
 
