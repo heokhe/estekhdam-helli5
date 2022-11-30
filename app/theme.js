@@ -2,6 +2,8 @@ import { createTheme } from '@mui/material/styles';
 import rtlPlugin from 'stylis-plugin-rtl';
 import createCache from '@emotion/cache';
 import { prefixer } from 'stylis';
+import { faIR as dataGridFaIR } from '@mui/x-data-grid';
+import { faIR } from '@mui/material/locale';
 
 export const theme = createTheme({
   direction: 'rtl',
@@ -13,7 +15,7 @@ export const theme = createTheme({
       // default: "#fafafa",
     },
   },
-});
+}, faIR, dataGridFaIR);
 
 export const cacheRtl = createCache({
   key: 'muirtl',
