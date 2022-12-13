@@ -13,6 +13,7 @@ import {
   Breadcrumbs,
 } from '@mui/material';
 import ArrowForward from '@mui/icons-material/ArrowForward';
+import CheckCircleOutline from '@mui/icons-material/CheckCircleOutline';
 import {
   json,
   redirect,
@@ -241,11 +242,12 @@ export default function ApplicationForm() {
             <input type="file" name="cv" accept=".pdf" required={requiresCv} />
           </Stack>
           <Button
-            sx={{ mx: 'auto', mt: 3, display: 'block' }}
+            sx={{ mx: 'auto', mt: 3, display: 'flex' }}
             type="submit"
             variant="contained"
             disableElevation
             size="large"
+            startIcon={<CheckCircleOutline />}
           >
             ثبت درخواست استخدام
           </Button>
