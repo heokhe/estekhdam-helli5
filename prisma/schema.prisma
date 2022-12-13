@@ -90,3 +90,8 @@ model Answer {
   Application   Application? @relation(fields: [applicationId], references: [id])
   applicationId Int?
 }
+
+model Admin {
+  username String @id
+  password String
+}
