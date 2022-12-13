@@ -38,6 +38,9 @@ export async function loader({ params }) {
       },
     },
   });
+  if (!category) {
+    throw new Response(undefined, { status: 404 });
+  }
   if (!category.data) {
     throw redirect('/');
   }
