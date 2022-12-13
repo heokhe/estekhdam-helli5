@@ -103,9 +103,10 @@ export default function Export() {
                 >
                   مشاهده پاسخ‌ها
                 </Button>,
+                row.cvAddress && <Button href={row.cvAddress} target="_blank" variant="contained" disableElevation>مشاهده رزومه</Button>
               ];
             },
-            width: 200,
+            flex: 1
           },
         ]}
         rows={applications}
