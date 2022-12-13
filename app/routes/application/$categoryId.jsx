@@ -56,7 +56,6 @@ export async function loader({ params }) {
 }
 
 export async function action({ request, params }) {
-  // const origin = request.headers.get("origin");
   const categoryId = parseInt(params.categoryId);
   const category = await prisma.category.findUnique({
     where: { id: categoryId },
@@ -76,7 +75,7 @@ export async function action({ request, params }) {
     unstable_createFileUploadHandler({
       maxPartSize: 5_000_000,
       filter: ({ contentType }) => contentType === 'application/pdf',
-      directory: 'public/cvs',
+      directory: 'public/uploads',
       file: () => `cv-${Date.now()}.pdf`,
     }),
     // parse everything else into memory
@@ -116,10 +115,6 @@ export async function action({ request, params }) {
       { status: 400 },
     );
   }
-  // const cvRelativePath = path.relative(
-  //   path.resolve(__dirname, ".."),
-  //   cv.filepath
-  // );
 
   const answerEntries = [...formData.entries('answer')].filter(([fieldName]) =>
     fieldName.startsWith('answer-'),
@@ -132,6 +127,7 @@ export async function action({ request, params }) {
       email,
       phoneNumber,
       categoryId: category.id,
+      cvAddress: `/uploads/${cv.name}`
     },
   });
 
