@@ -1,6 +1,7 @@
 {
-  "exclude": ["./cypress", "./cypress.config.ts"],
-  "include": ["**/*.js", "**/*.jsx"],
+  // "exclude": ["./cypress", "./cypress.config.ts", "./node_modules", "./build", "./public/build"],
+  // "include": ["**/*.js", "**/*.jsx"],
+  "include": ["./app", "./prisma"],
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ES2019"],
     "types": ["vitest/globals"],
