@@ -1,13 +1,10 @@
 import { Link, useLoaderData } from '@remix-run/react';
 import {
   Container,
-  List,
   ListItemButton,
   ListItemText,
   Paper,
   Typography,
-  Collapse,
-  Box,
 } from '@mui/material';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import ExpandLess from '@mui/icons-material/ExpandLess';
@@ -16,6 +13,7 @@ import { prisma } from '~/db.server';
 import { useState } from 'react';
 import logo from '~/public/logo.svg';
 import { Logo } from '~/components/icons/Logo';
+import { CategoryList } from '~/components/CategoryList';
 
 export async function loader() {
   return await prisma.category.findMany({
@@ -32,58 +30,6 @@ export async function loader() {
   });
 }
 
-function ListItemWithNestedList({
-  list,
-  children,
-  initiallyOpen = false,
-  ...props
-}) {
-  const [open, setOpen] = useState(initiallyOpen);
-  return (
-    <>
-      <ListItemButton {...props} onClick={() => setOpen(!open)}>
-        {children}
-        {open ? <ExpandLess /> : <ExpandMore />}
-      </ListItemButton>
-      <Collapse in={open}>{list}</Collapse>
-    </>
-  );
-}
-
-function CategoryList({ categories, depth = 0, ...props }) {
-  return (
-    <List disablePadding {...props}>
-      {categories.map((category) =>
-        category.subcategories ? (
-          <ListItemWithNestedList
-            initiallyOpen={depth === 0}
-            key={category.id}
-            list={
-              <CategoryList
-                depth={depth + 1}
-                key={`${category.id}children`}
-                categories={category.subcategories}
-                sx={{ ml: 2, borderLeft: 1, borderColor: 'divider' }}
-              />
-            }
-          >
-            <ListItemText primary={category.title} />
-          </ListItemWithNestedList>
-        ) : (
-          <ListItemButton
-            component={Link}
-            to={`application/${category.id}`}
-            key={category.id}
-          >
-            <ListItemText primary={category.title} />
-            <ArrowBack color="primary" />
-          </ListItemButton>
-        ),
-      )}
-    </List>
-  );
-}
-
 export default function Index() {
   /** @type {Awaited<ReturnType<typeof loader>>} */
   const rootCategories = useLoaderData();
@@ -98,7 +44,20 @@ export default function Index() {
       </Typography>
       <Container maxWidth="xs" sx={{ mt: 5 }}>
         <Paper variant="outlined">
-          <CategoryList categories={rootCategories} />
+          <CategoryList
+            maximumVisibleDepth={1}
+            categories={rootCategories}
+            renderFinalItem={(category) => (
+              <ListItemButton
+                component={Link}
+                to={`application/${category.id}`}
+                key={category.id}
+              >
+                <ListItemText primary={category.title} />
+                <ArrowBack color="primary" />
+              </ListItemButton>
+            )}
+          />
         </Paper>
       </Container>
     </Container>
