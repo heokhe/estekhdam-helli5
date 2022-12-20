@@ -1,5 +1,6 @@
 import { Form, Outlet, useLoaderData } from '@remix-run/react';
 import { redirect } from '@remix-run/node';
+import bcrypt from 'bcryptjs';
 import { prisma } from '~/db.server';
 import { getSession, getUsername, setSession } from '~/cookie.server';
 
@@ -33,9 +34,15 @@ export async function action({ request }) {
       username,
     },
   });
-  if (!admin /* || admin.password !== password */) {
+
+  if (!admin) {
     throw new Response(undefined, { status: 401 });
   }
+  const passwordIsValid = await bcrypt.compare(password, admin.password);
+  if (!passwordIsValid) {
+    throw new Response(undefined, { status: 401 });
+  }
+
   session.set('username', username);
   return new Response(undefined, {
     status: 200,
@@ -48,7 +55,7 @@ export async function action({ request }) {
 export default function AdminPage() {
   const { authed } = useLoaderData();
   if (authed) {
-    return <Outlet />
+    return <Outlet />;
   }
   return (
     <Form method="post">
