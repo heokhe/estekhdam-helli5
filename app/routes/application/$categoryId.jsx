@@ -99,7 +99,11 @@ export async function action({ request, params }) {
         .string()
         .email({ message: 'آدرس ایمیل معتبر نیست' })
         .or(z.string().max(0)),
-      phoneNumber: z.string(), // TODO
+      phoneNumber: z
+        .string()
+        .min(1, 'شماره تلفن اجباری است')
+        .length(11, 'شماره تلفن باید ۱۱ رقم باشد')
+        .regex(/^09\d{9}$/, 'شماره تلفن معتبر نیست'),
     }).parse({
       name,
       lastName,
@@ -214,9 +218,10 @@ export default function ApplicationForm() {
             />
             <TextField
               label="شماره تماس"
+              type="tel"
+              pattern="^09\d{9}$"
               variant="filled"
               name="phoneNumber"
-              type="email"
             />
           </Stack>
           <Stack gap={2} sx={{ mt: 4 }}>
