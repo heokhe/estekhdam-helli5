@@ -1,4 +1,10 @@
-import { List, ListItemButton, ListItemText, Collapse } from '@mui/material';
+import {
+  List,
+  ListItemButton,
+  ListItemText,
+  Collapse,
+  IconButton,
+} from '@mui/material';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import { useState } from 'react';
@@ -6,15 +12,21 @@ import { useState } from 'react';
 function ListItemWithNestedList({
   list,
   children,
+  actions,
   initiallyOpen = false,
   ...props
 }) {
   const [open, setOpen] = useState(initiallyOpen);
+  const toggle = () => setOpen(!open);
+  const listItemIsClickable = actions.length === 0;
   return (
     <>
-      <ListItemButton {...props} onClick={() => setOpen(!open)}>
+      <ListItemButton {...props} onClick={listItemIsClickable ? toggle : undefined}>
         {children}
-        {open ? <ExpandLess /> : <ExpandMore />}
+        {actions}
+        <IconButton onClick={!listItemIsClickable ? toggle : undefined}>
+          {open ? <ExpandLess /> : <ExpandMore />}
+        </IconButton>
       </ListItemButton>
       <Collapse in={open}>{list}</Collapse>
     </>
@@ -24,6 +36,7 @@ function ListItemWithNestedList({
 export function CategoryList({
   categories,
   renderFinalItem,
+  parentItemActions = () => [],
   maximumVisibleDepth = 0,
   _depth = 0,
   ...props
@@ -42,9 +55,11 @@ export function CategoryList({
                 maximumVisibleDepth={maximumVisibleDepth}
                 categories={category.subcategories}
                 renderFinalItem={renderFinalItem}
+                parentItemActions={parentItemActions}
                 sx={{ ml: 2, borderLeft: 1, borderColor: 'divider' }}
               />
             }
+            actions={parentItemActions(category)}
           >
             <ListItemText primary={category.title} />
           </ListItemWithNestedList>
