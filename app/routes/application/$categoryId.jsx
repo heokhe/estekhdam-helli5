@@ -246,7 +246,7 @@ export default function ApplicationForm() {
             <input type="file" name="cv" accept=".pdf" required={requiresCv} />
           </Stack>
           <Button
-            sx={{ mx: 'auto', mt: 3, display: 'flex' }}
+            sx={{ mx: 'auto', my: 3, display: 'flex' }}
             type="submit"
             variant="contained"
             disableElevation
