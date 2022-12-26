@@ -83,6 +83,9 @@ export default function Applications() {
     <Toolbar>
       <Typography variant="h6" sx={{ flexGrow: 1 }}>پنل ادمین</Typography>
       <Button component={Link} to="categories">ویرایش دسته‌بندی‌ها</Button>
+      <Form action="logout" method="post">
+        <Button type="submit">خروج</Button>
+      </Form>
     </Toolbar>
     <div style={{ height: 600 }}>
       <DataGrid
