@@ -1,5 +1,4 @@
 import { Form, Outlet, useLoaderData } from '@remix-run/react';
-import { redirect } from '@remix-run/node';
 import bcrypt from 'bcryptjs';
 import { prisma } from '~/db.server';
 import { getSession, getUsername, setSession } from '~/cookie.server';
@@ -12,16 +11,7 @@ async function isAuthed(request) {
 }
 
 export async function loader({ request }) {
-  const authed = await isAuthed(request);
-  const path = new URL(request.url).pathname.toLowerCase();
-  const isRoot = path === '/admin' || path === '/admin/';
-  if (!isRoot && !authed) {
-    throw redirect('/admin');
-  }
-  if (isRoot && authed) {
-    throw redirect('/admin/view');
-  }
-  return { authed };
+  return { authed: await isAuthed(request) };
 }
 
 export async function action({ request }) {

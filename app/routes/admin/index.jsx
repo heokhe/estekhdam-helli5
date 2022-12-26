@@ -1,4 +1,10 @@
-import { useLoaderData } from '@remix-run/react';
+import {
+  Form,
+  useLoaderData,
+  useTransition,
+  useFetcher,
+  Link,
+} from '@remix-run/react';
 import { prisma } from '~/db.server';
 import { DataGrid } from '@mui/x-data-grid';
 import {
@@ -9,11 +15,33 @@ import {
   Dialog,
   DialogActions,
   DialogTitle,
+  ListItemText,
+  ListItem,
+  IconButton,
+  Grid,
+  ListItemButton,
+  TextField,
+  List,
+  InputBase,
+  Divider,
+  Typography,
+  Checkbox,
+  FormGroup,
+  FormControlLabel,
+  DialogContent,
+  Toolbar,
 } from '@mui/material';
 import { useState } from 'react';
+import EditOutlined from '@mui/icons-material/EditOutlined';
+import Add from '@mui/icons-material/Add';
+import DeleteOutline from '@mui/icons-material/DeleteOutline';
+import { CategoryList } from '~/components/CategoryList';
+import { json } from '@remix-run/server-runtime';
+import { useEffect } from 'react';
+import { Box } from '@mui/system';
 
 export async function loader() {
-  const applications = await prisma.application.findMany({
+  const rawApplications = await prisma.application.findMany({
     include: {
       answers: true,
       category: {
@@ -27,7 +55,7 @@ export async function loader() {
       },
     },
   });
-  return applications.map((application) => {
+  const applications = rawApplications.map((application) => {
     return {
       ...application,
       answers: application.answers.map((answer) => {
@@ -35,23 +63,29 @@ export async function loader() {
           (q) => q.id === answer.questionId,
         );
         return {
+          id: question.id,
           question: question.title,
           answer: answer.value,
         };
       }),
     };
   });
+  return applications;
 }
 
-export default function Export() {
+export default function Applications() {
   /** @type {Awaited<ReturnType<typeof loader>>} */
   const applications = useLoaderData();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentApplication, setCurrentApplication] = useState(null);
   return (
     <>
+    <Toolbar>
+      <Typography variant="h6" sx={{ flexGrow: 1 }}>پنل ادمین</Typography>
+      <Button component={Link} to="categories">ویرایش دسته‌بندی‌ها</Button>
+    </Toolbar>
+    <div style={{ height: 600 }}>
       <DataGrid
-        autoHeight
         checkboxSelection
         disableSelectionOnClick
         columns={[
@@ -89,11 +123,12 @@ export default function Export() {
             width: 200,
           },
           {
-            field: 'actions',
+            field: 'اعمال',
             type: 'actions',
             getActions: ({ row }) => {
               return [
                 <Button
+                  key="answers"
                   variant="contained"
                   disableElevation
                   onClick={() => {
@@ -103,10 +138,20 @@ export default function Export() {
                 >
                   مشاهده پاسخ‌ها
                 </Button>,
-                row.cvAddress && <Button href={row.cvAddress} target="_blank" variant="contained" disableElevation>مشاهده رزومه</Button>
+                row.cvAddress && (
+                  <Button
+                    key="cv"
+                    href={row.cvAddress}
+                    target="_blank"
+                    variant="contained"
+                    disableElevation
+                  >
+                    مشاهده رزومه
+                  </Button>
+                ),
               ];
             },
-            flex: 1
+            flex: 1,
           },
         ]}
         rows={applications}
@@ -120,8 +165,8 @@ export default function Export() {
         <DialogTitle sx={{ borderBottom: 1, borderColor: 'divider' }}>
           پاسخ‌ها
         </DialogTitle>
-        {currentApplication?.answers.map(({ question, answer }, index) => (
-          <Accordion elevation={0} key={`${question}-${answer}`}>
+        {currentApplication?.answers.map(({ question, answer, id }) => (
+          <Accordion elevation={0} key={id}>
             <AccordionSummary>{question}</AccordionSummary>
             <AccordionDetails>{answer}</AccordionDetails>
           </Accordion>
@@ -130,6 +175,7 @@ export default function Export() {
           <Button onClick={() => setDialogOpen(false)}>بستن</Button>
         </DialogActions>
       </Dialog>
+    </div>
     </>
   );
 }
