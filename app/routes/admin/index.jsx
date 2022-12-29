@@ -1,8 +1,6 @@
 import {
   Form,
   useLoaderData,
-  useTransition,
-  useFetcher,
   Link,
 } from '@remix-run/react';
 import { prisma } from '~/db.server';
@@ -15,30 +13,10 @@ import {
   Dialog,
   DialogActions,
   DialogTitle,
-  ListItemText,
-  ListItem,
-  IconButton,
-  Grid,
-  ListItemButton,
-  TextField,
-  List,
-  InputBase,
-  Divider,
   Typography,
-  Checkbox,
-  FormGroup,
-  FormControlLabel,
-  DialogContent,
   Toolbar,
 } from '@mui/material';
 import { useState } from 'react';
-import EditOutlined from '@mui/icons-material/EditOutlined';
-import Add from '@mui/icons-material/Add';
-import DeleteOutline from '@mui/icons-material/DeleteOutline';
-import { CategoryList } from '~/components/CategoryList';
-import { json } from '@remix-run/server-runtime';
-import { useEffect } from 'react';
-import { Box } from '@mui/system';
 
 export async function loader() {
   const rawApplications = await prisma.application.findMany({
