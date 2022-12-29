@@ -96,12 +96,13 @@ export async function action({ request }) {
   }
   if (action === 'new-category') {
     const parentId = formData.get('parentId');
+    const hasParent = parentId && parentId !== 'undefined'
     const title = formData.get('title');
     const hasSubcategories = formData.get('hasSubcategories') === 'true';
     const newCategory = await prisma.category.create({
       data: {
         title,
-        ...parentId && { parentId: parseInt(parentId) }
+        ...(hasParent && { parentId: parseInt(parentId) }),
       },
     });
     if (!hasSubcategories) {
@@ -145,14 +146,14 @@ export async function action({ request }) {
   }
 }
 
-function AddCategoryDialog({ open, onClose, category, onSubmit }) {
+function AddCategoryDialog({ open, onClose, parentCategory, onSubmit }) {
   const [title, setTitle] = useState('');
   const [hasSubcategories, setHasSubcategories] = useState(false);
   function submit() {
     if (!title) return;
     const formData = new FormData();
     formData.set('action', 'new-category');
-    formData.set('parentId', category.id);
+    formData.set('parentId', parentCategory?.id);
     formData.set('title', title);
     formData.set('hasSubcategories', hasSubcategories);
     onSubmit(formData);
@@ -172,7 +173,10 @@ function AddCategoryDialog({ open, onClose, category, onSubmit }) {
       fullWidth
       TransitionProps={{ unmountOnExit: true }}
     >
-      <DialogTitle>اضافه کردن دسته‌بندی به «{category?.title}»</DialogTitle>
+      <DialogTitle>
+        اضافه کردن دسته‌بندی
+        {parentCategory && `به «${parentCategory?.title}»`}
+      </DialogTitle>
       <DialogContent>
         <TextField
           variant="filled"
@@ -292,8 +296,21 @@ export default function Categories() {
               </>
             )}
           />
-          <Box display="flex" alignItems="center" justifyContent="center" sx={{ my: 4 }}>
-            <Button variant="contained" disableElevation startIcon={<Add />} size="large">
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            sx={{ my: 4 }}
+          >
+            <Button
+              variant="contained"
+              disableElevation
+              startIcon={<Add />}
+              size="large"
+              onClick={() => {
+                setAddCategoryDialogOpen(true)
+              }}
+            >
               افزودن دسته‌بندی جدید
             </Button>
           </Box>
@@ -357,7 +374,7 @@ export default function Categories() {
       />
       <AddCategoryDialog
         open={addCategoryDialogOpen}
-        category={addCategoryDialogParent}
+        parentCategory={addCategoryDialogParent}
         onClose={() => setAddCategoryDialogOpen(false)}
         onSubmit={(data) => {
           fetcher.submit(data, { method: 'post', replace: true });
