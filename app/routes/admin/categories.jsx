@@ -96,7 +96,7 @@ export async function action({ request }) {
   }
   if (action === 'new-category') {
     const parentId = formData.get('parentId');
-    const hasParent = parentId && parentId !== 'undefined'
+    const hasParent = parentId && parentId !== 'undefined';
     const title = formData.get('title');
     const hasSubcategories = formData.get('hasSubcategories') === 'true';
     const newCategory = await prisma.category.create({
@@ -139,10 +139,10 @@ export async function action({ request }) {
     // })
     await prisma.category.delete({
       where: {
-        id: categoryId
-      }
-    })
-    return json({})
+        id: categoryId,
+      },
+    });
+    return json({});
   }
 }
 
@@ -212,35 +212,36 @@ function AddCategoryDialog({ open, onClose, parentCategory, onSubmit }) {
 
 function DeleteCategoryDialog({ open, onClose, onDelete, category }) {
   const handleDelete = () => {
-    const formData = new FormData()
-    formData.set('action', 'delete-category')
-    formData.set('category', category.id)
-    onDelete(formData)
-    onClose()
-  }
+    const formData = new FormData();
+    formData.set('action', 'delete-category');
+    formData.set('category', category.id);
+    onDelete(formData);
+    onClose();
+  };
 
-  return <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs">
-    <DialogTitle>حذف دسته‌بندی «{category?.title}»</DialogTitle>
-    <DialogContent>
-      <DialogContentText>
-        <ul style={{ margin: 0 }}>
-          <li>
-            زیرشاخه‌های دسته‌بندی ذکر شده در صورت وجود حذف می‌شوند.
-          </li>
-          <li>
-            تمامی درخواست‌های استخدام که برای این دسته‌بندی ارسال شده‌اند حذف خواهند شد.
-          </li>
-          <li>
-            این عمل قابل بازگشت نیست.
-          </li>
-        </ul>
-      </DialogContentText>
-    </DialogContent>
-    <DialogActions>
-      <Button onClick={onClose}>لغو</Button>
-      <Button color="error" onClick={handleDelete}>حذف</Button>
-    </DialogActions>
-  </Dialog>
+  return (
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs">
+      <DialogTitle>حذف دسته‌بندی «{category?.title}»</DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          <ul style={{ margin: 0 }}>
+            <li>زیرشاخه‌های دسته‌بندی ذکر شده در صورت وجود حذف می‌شوند.</li>
+            <li>
+              تمامی درخواست‌های استخدام که برای این دسته‌بندی ارسال شده‌اند حذف
+              خواهند شد.
+            </li>
+            <li>این عمل قابل بازگشت نیست.</li>
+          </ul>
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>لغو</Button>
+        <Button color="error" onClick={handleDelete}>
+          حذف
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
 }
 
 export default function Categories() {
@@ -269,30 +270,34 @@ export default function Categories() {
                 <IconButton onClick={() => setSelectedCategoryId(category.id)}>
                   <EditOutlined />
                 </IconButton>
-                <IconButton onClick={() => {
-                  setDeleteCategory(category)
-                  setDeleteDialogOpen(true)
-                }}>
+                <IconButton
+                  onClick={() => {
+                    setDeleteCategory(category);
+                    setDeleteDialogOpen(true);
+                  }}
+                >
                   <DeleteOutline />
                 </IconButton>
               </ListItemButton>
             )}
             parentItemActions={(category) => (
               <>
-              <IconButton onClick={() => {
-                  setDeleteCategory(category)
-                  setDeleteDialogOpen(true)
-                }}>
+                <IconButton
+                  onClick={() => {
+                    setDeleteCategory(category);
+                    setDeleteDialogOpen(true);
+                  }}
+                >
                   <DeleteOutline />
                 </IconButton>
-              <IconButton
-                onClick={() => {
-                  setAddCategoryDialogOpen(true);
-                  setAddCategoryDialogParent(category);
-                }}
-              >
-                <Add />
-              </IconButton>
+                <IconButton
+                  onClick={() => {
+                    setAddCategoryDialogOpen(true);
+                    setAddCategoryDialogParent(category);
+                  }}
+                >
+                  <Add />
+                </IconButton>
               </>
             )}
           />
@@ -308,7 +313,7 @@ export default function Categories() {
               startIcon={<Add />}
               size="large"
               onClick={() => {
-                setAddCategoryDialogOpen(true)
+                setAddCategoryDialogOpen(true);
               }}
             >
               افزودن دسته‌بندی جدید
@@ -368,7 +373,7 @@ export default function Categories() {
         open={deleteDialogOpen}
         category={deleteCategory}
         onClose={() => setDeleteDialogOpen(false)}
-        onDelete={data => {
+        onDelete={(data) => {
           fetcher.submit(data, { method: 'post', replace: true });
         }}
       />
