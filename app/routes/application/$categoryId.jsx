@@ -1,4 +1,3 @@
-import path from 'path';
 import { Form, Link, useActionData, useLoaderData } from '@remix-run/react';
 import { prisma } from '~/db.server';
 import { z } from 'zod';
@@ -11,8 +10,11 @@ import {
   TextField,
   Stack,
   Breadcrumbs,
+  Grid,
+  Avatar,
 } from '@mui/material';
 import ArrowForward from '@mui/icons-material/ArrowForward';
+import AddAPhotoOutlined from '@mui/icons-material/AddAPhotoOutlined';
 import CheckCircleOutline from '@mui/icons-material/CheckCircleOutline';
 import {
   json,
@@ -78,6 +80,12 @@ export async function action({ request, params }) {
       directory: 'public/uploads',
       file: () => `cv-${Date.now()}.pdf`,
     }),
+    unstable_createFileUploadHandler({
+      maxPartSize: 5_000_000,
+      filter: ({ contentType }) => contentType.startsWith('image/'),
+      directory: 'public/uploads',
+      file: ({ filename }) => `${Date.now()}-${filename}`
+    }),
     // parse everything else into memory
     unstable_createMemoryUploadHandler(),
   );
@@ -90,6 +98,7 @@ export async function action({ request, params }) {
   const email = formData.get('email');
   const phoneNumber = formData.get('phoneNumber');
   const cv = formData.get('cv');
+  const image = formData.get('image');
 
   try {
     z.object({
@@ -119,6 +128,12 @@ export async function action({ request, params }) {
       { status: 400 },
     );
   }
+  if (!image.name) {
+    throw json(
+      { errors: [{ message: 'ارسال عکس پرسنلی الزامی است' }] },
+      { status: 400 },
+    );
+  }
 
   const answerEntries = [...formData.entries('answer')].filter(([fieldName]) =>
     fieldName.startsWith('answer-'),
@@ -130,8 +145,15 @@ export async function action({ request, params }) {
       lastName,
       email,
       phoneNumber,
-      categoryId: category.id,
-      cvAddress: `/uploads/${cv.name}`
+      category: {
+        connect: {
+          id: categoryId
+        }
+      },
+      ...cv.name && {
+        cvAddress: `/uploads/${cv.name}`,
+      },
+      imageAddress: `/uploads/${image.name}`,
     },
   });
 
@@ -203,12 +225,29 @@ export default function ApplicationForm() {
           <Stack gap={2}>
             <Typography variant="h5">مشخصات فردی</Typography>
             <Stack direction="row" gap={1}>
+              <Grid container gap={2} flexWrap="nowrap">
+                <Grid item xs="auto" sx={{ textAlign: 'center' }}>
+                  <input type="file" name="image" accept="image/*" required id="image-input" style={{ display: 'none' }} />
+                  <Avatar component="label" htmlFor="image-input" sx={{ width: 80, height: 80, bgcolor: 'primary.light', mx: 'auto', mb: 1 }}>
+                    <AddAPhotoOutlined sx={{ fontSize: 32 }} />
+                  </Avatar>
+                  <Typography variant="caption" color="text.secondary">
+                    عکس پرسنلی (حداکثر حجم: ۵ مگابایت)
+                  </Typography>
+                </Grid>
+                <Grid item xs={12}>
+                  <Stack gap={2}>
+
               <TextField name="name" label="نام" variant="filled" />
               <TextField
                 name="lastName"
                 label="نام خانوادگی"
                 variant="filled"
               />
+                  </Stack>
+
+                </Grid>
+              </Grid>
             </Stack>
             <TextField
               label="آدرس ایمیل"
