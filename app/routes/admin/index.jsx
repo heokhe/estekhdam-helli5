@@ -119,7 +119,7 @@ export default function Applications() {
                 >
                   مشاهده پاسخ‌ها
                 </Button>,
-                row.cvAddress && (
+                row.cvAddress ? (
                   <Button
                     key="cv"
                     href={row.cvAddress}
@@ -129,7 +129,7 @@ export default function Applications() {
                   >
                     مشاهده رزومه
                   </Button>
-                ),
+                ) : <></>,
               ];
             },
             flex: 1,
