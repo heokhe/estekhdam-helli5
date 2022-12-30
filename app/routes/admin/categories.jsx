@@ -106,22 +106,14 @@ export async function action({ request }) {
       },
     });
     if (!hasSubcategories) {
-      const data = await prisma.categoryData.create({
-        data: {
-          requiresCV: true,
-        },
-      });
-      await prisma.category.update({
-        where: {
-          id: newCategory.id,
-        },
-        data: {
-          data: {
-            connect: {
-              id: data.id,
-            },
-          },
-        },
+      await prisma.categoryData.create({
+        data:{
+          Category:{
+            connect:{
+              id: newCategory.id
+            }
+          }
+        }
       });
     }
     return json(newCategory);
