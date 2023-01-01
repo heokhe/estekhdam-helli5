@@ -102,6 +102,7 @@ export default function Applications() {
             type: 'dateTime',
             headerName: 'زمان ارسال',
             width: 200,
+            valueFormatter: ({ value }) => new Date(value).toLocaleString('fa-IR')
           },
           {
             field: 'اعمال',
