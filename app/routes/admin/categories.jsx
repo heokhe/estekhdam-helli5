@@ -1,14 +1,6 @@
-import {
-  Form,
-  useLoaderData,
-  useTransition,
-  useFetcher,
-} from '@remix-run/react';
+import { Form, useLoaderData, useFetcher } from '@remix-run/react';
 import { prisma } from '~/db.server';
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
   Button,
   Dialog,
   DialogActions,
@@ -30,13 +22,12 @@ import {
   DialogContentText,
   ListItemIcon,
 } from '@mui/material';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import EditOutlined from '@mui/icons-material/EditOutlined';
 import Add from '@mui/icons-material/Add';
 import DeleteOutline from '@mui/icons-material/DeleteOutline';
 import { CategoryList } from '~/components/CategoryList';
 import { json } from '@remix-run/server-runtime';
-import { useEffect } from 'react';
 import { Box } from '@mui/system';
 
 export async function loader() {
@@ -108,13 +99,13 @@ export async function action({ request }) {
     });
     if (!hasSubcategories) {
       await prisma.categoryData.create({
-        data:{
-          Category:{
-            connect:{
-              id: newCategory.id
-            }
-          }
-        }
+        data: {
+          Category: {
+            connect: {
+              id: newCategory.id,
+            },
+          },
+        },
       });
     }
     return json(newCategory);
@@ -209,8 +200,8 @@ function AddCategoryDialog({ open, onClose, parentCategory, onSubmit }) {
           />
         </FormGroup>
         <Typography variant="caption" color="text.secondary">
-          تنها دسته‌بندی‌های بدون زیرشاخه قابلیت دریافت درخواست استخدام را دارند.{' '}
-          <b>این ویژگی قابل ویرایش نیست.</b>
+          تنها دسته‌بندی‌های بدون زیرشاخه قابلیت دریافت درخواست استخدام را
+          دارند. <b>این ویژگی قابل ویرایش نیست.</b>
         </Typography>
       </DialogContent>
       <DialogActions sx={{ borderTop: 1, borderColor: 'divider' }}>
