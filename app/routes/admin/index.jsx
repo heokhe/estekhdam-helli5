@@ -15,6 +15,7 @@ import {
   DialogTitle,
   Typography,
   Toolbar,
+  Avatar,
 } from '@mui/material';
 import { useState } from 'react';
 
@@ -76,6 +77,18 @@ export default function Applications() {
               return row.category.title;
             },
             width: 200,
+          },
+          {
+            field: 'imageAddress',
+            sortable: false,
+            filterable: false,
+            headerName: 'عکس',
+            width: 80,
+            align: 'center',
+            headerAlign: 'center',
+            renderCell: ({ value: imageAddress }) => {
+              return <Avatar src={imageAddress} />
+            }
           },
           {
             field: 'name',
