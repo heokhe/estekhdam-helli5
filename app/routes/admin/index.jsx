@@ -1,8 +1,4 @@
-import {
-  Form,
-  useLoaderData,
-  Link,
-} from '@remix-run/react';
+import { Form, useLoaderData, Link } from '@remix-run/react';
 import { prisma } from '~/db.server';
 import { DataGrid } from '@mui/x-data-grid';
 import {
@@ -39,7 +35,7 @@ export async function loader() {
       ...application,
       answers: application.answers.map((answer) => {
         const question = application.category.data.questions.find(
-          (q) => q.id === answer.questionId,
+          (q) => q.id === answer.questionId
         );
         return {
           id: question.id,
@@ -59,118 +55,125 @@ export default function Applications() {
   const [currentApplication, setCurrentApplication] = useState(null);
   return (
     <>
-    <Toolbar>
-      <Typography variant="h6" sx={{ flexGrow: 1 }}>پنل ادمین</Typography>
-      <Button component={Link} to="categories">ویرایش دسته‌بندی‌ها</Button>
-      <Form action="logout" method="post">
-        <Button type="submit">خروج</Button>
-      </Form>
-    </Toolbar>
-    <div style={{ height: 600 }}>
-      <DataGrid
-        checkboxSelection
-        disableSelectionOnClick
-        columns={[
-          {
-            headerName: 'موقعیت شغلی',
-            valueGetter: ({ row }) => {
-              return row.category.title;
+      <Toolbar>
+        <Typography variant="h6" sx={{ flexGrow: 1 }}>
+          پنل ادمین
+        </Typography>
+        <Button component={Link} to="categories">
+          ویرایش دسته‌بندی‌ها
+        </Button>
+        <Form action="logout" method="post">
+          <Button type="submit">خروج</Button>
+        </Form>
+      </Toolbar>
+      <div style={{ height: 600 }}>
+        <DataGrid
+          checkboxSelection
+          disableSelectionOnClick
+          columns={[
+            {
+              headerName: 'موقعیت شغلی',
+              valueGetter: ({ row }) => {
+                return row.category.title;
+              },
+              width: 200,
             },
-            width: 200,
-          },
-          {
-            field: 'imageAddress',
-            sortable: false,
-            filterable: false,
-            headerName: 'عکس',
-            width: 80,
-            align: 'center',
-            headerAlign: 'center',
-            renderCell: ({ value: imageAddress }) => {
-              return <Avatar src={imageAddress} />
-            }
-          },
-          {
-            field: 'name',
-            headerName: 'نام',
-            width: 120,
-          },
-          {
-            field: 'lastName',
-            headerName: 'نام خانوادگی',
-            width: 170,
-          },
-          {
-            field: 'phoneNumber',
-            headerName: 'شماره تماس',
-            width: 170,
-          },
-          {
-            field: 'email',
-            headerName: 'آدرس ایمیل',
-            width: 170,
-          },
-          {
-            field: 'time',
-            type: 'dateTime',
-            headerName: 'زمان ارسال',
-            width: 200,
-            valueFormatter: ({ value }) => new Date(value).toLocaleString('fa-IR')
-          },
-          {
-            field: 'اعمال',
-            type: 'actions',
-            getActions: ({ row }) => {
-              return [
-                <Button
-                  key="answers"
-                  variant="contained"
-                  disableElevation
-                  onClick={() => {
-                    setDialogOpen(true);
-                    setCurrentApplication(row);
-                  }}
-                >
-                  مشاهده پاسخ‌ها
-                </Button>,
-                row.cvAddress ? (
+            {
+              field: 'imageAddress',
+              sortable: false,
+              filterable: false,
+              headerName: 'عکس',
+              width: 80,
+              align: 'center',
+              headerAlign: 'center',
+              renderCell: ({ value: imageAddress }) => {
+                return <Avatar src={imageAddress} />;
+              },
+            },
+            {
+              field: 'name',
+              headerName: 'نام',
+              width: 120,
+            },
+            {
+              field: 'lastName',
+              headerName: 'نام خانوادگی',
+              width: 170,
+            },
+            {
+              field: 'phoneNumber',
+              headerName: 'شماره تماس',
+              width: 170,
+            },
+            {
+              field: 'email',
+              headerName: 'آدرس ایمیل',
+              width: 170,
+            },
+            {
+              field: 'time',
+              type: 'dateTime',
+              headerName: 'زمان ارسال',
+              width: 200,
+              valueFormatter: ({ value }) =>
+                new Date(value).toLocaleString('fa-IR'),
+            },
+            {
+              field: 'اعمال',
+              type: 'actions',
+              getActions: ({ row }) => {
+                return [
                   <Button
-                    key="cv"
-                    href={row.cvAddress}
-                    target="_blank"
+                    key="answers"
                     variant="contained"
                     disableElevation
+                    onClick={() => {
+                      setDialogOpen(true);
+                      setCurrentApplication(row);
+                    }}
                   >
-                    مشاهده رزومه
-                  </Button>
-                ) : <></>,
-              ];
+                    مشاهده پاسخ‌ها
+                  </Button>,
+                  row.cvAddress ? (
+                    <Button
+                      key="cv"
+                      href={row.cvAddress}
+                      target="_blank"
+                      variant="contained"
+                      disableElevation
+                    >
+                      مشاهده رزومه
+                    </Button>
+                  ) : (
+                    <></>
+                  ),
+                ];
+              },
+              flex: 1,
             },
-            flex: 1,
-          },
-        ]}
-        rows={applications}
-      />
-      <Dialog
-        open={dialogOpen}
-        onClose={() => setDialogOpen(false)}
-        fullWidth
-        keepMounted
-      >
-        <DialogTitle sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          پاسخ‌ها
-        </DialogTitle>
-        {currentApplication?.answers.map(({ question, answer, id }) => (
-          <Accordion elevation={0} key={id}>
-            <AccordionSummary>{question}</AccordionSummary>
-            <AccordionDetails>{answer}</AccordionDetails>
-          </Accordion>
-        ))}
-        <DialogActions sx={{ borderTop: 1, borderColor: 'divider' }}>
-          <Button onClick={() => setDialogOpen(false)}>بستن</Button>
-        </DialogActions>
-      </Dialog>
-    </div>
+          ]}
+          rows={applications}
+        />
+        <Dialog
+          open={dialogOpen}
+          onClose={() => setDialogOpen(false)}
+          fullWidth
+          keepMounted
+        >
+          <DialogTitle sx={{ borderBottom: 1, borderColor: 'divider' }}>
+            پاسخ‌ها
+          </DialogTitle>
+          {currentApplication?.answers.map(({ question, answer, id }) => (
+            <Accordion elevation={0} key={id}>
+              <AccordionSummary>{question}</AccordionSummary>
+              <AccordionDetails>{answer}</AccordionDetails>
+            </Accordion>
+          ))}
+          <DialogActions sx={{ borderTop: 1, borderColor: 'divider' }}>
+            <Button onClick={() => setDialogOpen(false)}>بستن</Button>
+          </DialogActions>
+        </Dialog>
+      </div>
     </>
   );
 }

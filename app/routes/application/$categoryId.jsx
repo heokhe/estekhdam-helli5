@@ -83,14 +83,14 @@ export async function action({ request, params }) {
       maxPartSize: 5_000_000,
       filter: ({ contentType }) => contentType.startsWith('image/'),
       directory: 'public/uploads',
-      file: ({ filename }) => `${Date.now()}-${filename}`
+      file: ({ filename }) => `${Date.now()}-${filename}`,
     }),
     // parse everything else into memory
-    unstable_createMemoryUploadHandler(),
+    unstable_createMemoryUploadHandler()
   );
   const formData = await unstable_parseMultipartFormData(
     request,
-    uploadHandler,
+    uploadHandler
   );
   const name = formData.get('name');
   const lastName = formData.get('lastName');
@@ -124,18 +124,18 @@ export async function action({ request, params }) {
   if (!category.data.requiresCV && !cv.name) {
     throw json(
       { errors: [{ message: 'ارسال فایل رزومه الزامی است' }] },
-      { status: 400 },
+      { status: 400 }
     );
   }
   if (!image.name) {
     throw json(
       { errors: [{ message: 'ارسال عکس پرسنلی الزامی است' }] },
-      { status: 400 },
+      { status: 400 }
     );
   }
 
   const answerEntries = [...formData.entries('answer')].filter(([fieldName]) =>
-    fieldName.startsWith('answer-'),
+    fieldName.startsWith('answer-')
   );
 
   const application = await prisma.application.create({
@@ -146,12 +146,12 @@ export async function action({ request, params }) {
       phoneNumber,
       category: {
         connect: {
-          id: categoryId
-        }
+          id: categoryId,
+        },
       },
-      ...cv.name && {
+      ...(cv.name && {
         cvAddress: `/uploads/${cv.name}`,
-      },
+      }),
       imageAddress: `/uploads/${image.name}`,
     },
   });
@@ -159,12 +159,12 @@ export async function action({ request, params }) {
   for (const question of category.data.questions) {
     const [, answerValue] =
       answerEntries.find(
-        ([fieldName]) => fieldName === `answer-${question.id}`,
+        ([fieldName]) => fieldName === `answer-${question.id}`
       ) ?? [];
     if (!answerValue) {
       throw json(
         { errors: [{ message: `لطفاً به تمام سوالات پاسخ دهید` }] },
-        { status: 400 },
+        { status: 400 }
       );
     }
     await prisma.answer.create({
@@ -233,15 +233,13 @@ export default function ApplicationForm() {
                 </Grid>
                 <Grid item xs={12}>
                   <Stack gap={2}>
-
-              <TextField name="name" label="نام" variant="filled" />
-              <TextField
-                name="lastName"
-                label="نام خانوادگی"
-                variant="filled"
-              />
+                    <TextField name="name" label="نام" variant="filled" />
+                    <TextField
+                      name="lastName"
+                      label="نام خانوادگی"
+                      variant="filled"
+                    />
                   </Stack>
-
                 </Grid>
               </Grid>
             </Stack>
