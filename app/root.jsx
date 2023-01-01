@@ -12,12 +12,20 @@ import {
 import { CacheProvider } from '@emotion/react';
 import { getUser } from './session.server';
 import { cacheRtl, theme } from './theme';
+import styles from './styles/index.css';
 
 export const meta = () => ({
   charset: 'utf-8',
   title: 'Remix Notes',
   viewport: 'width=device-width,initial-scale=1',
 });
+
+export const links = () => [
+  {
+    rel: 'stylesheet',
+    href: styles,
+  },
+];
 
 export async function loader({ request }) {
   return json({
