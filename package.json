@@ -18,7 +18,6 @@
     "test:e2e:run": "cross-env PORT=8811 start-server-and-test start:mocks http://localhost:8811 \"npx cypress run\"",
     "validate": "run-p \"test -- --run\" lint test:e2e:run"
   },
-  "prettier": {},
   "eslintIgnore": [
     "/node_modules",
     "/build",
