@@ -28,6 +28,7 @@ import {
   FormControlLabel,
   DialogContent,
   DialogContentText,
+  ListItemIcon,
 } from '@mui/material';
 import { useState } from 'react';
 import EditOutlined from '@mui/icons-material/EditOutlined';
@@ -132,6 +133,23 @@ export async function action({ request }) {
     await prisma.category.delete({
       where: {
         id: categoryId,
+      },
+    });
+    return json({});
+  }
+  if (action === 'toggle-requires-cv') {
+    const categoryId = parseInt(formData.get('category'));
+    const requires = formData.get('requires-cv') === 'true';
+    await prisma.categoryData.updateMany({
+      where: {
+        Category: {
+          every: {
+            id: categoryId,
+          },
+        },
+      },
+      data: {
+        requiresCV: requires,
       },
     });
     return json({});
@@ -319,6 +337,25 @@ export default function Categories() {
                 ویرایش سوالات «{selectedCategory.title}»
               </Typography>
               <List disablePadding>
+                <ListItem key={`category-${selectedCategory.id}`}>
+                  <ListItemIcon>
+                    <Checkbox
+                      defaultChecked={selectedCategory.data.requiresCV}
+                      onChange={(event) => {
+                        const formData = new FormData();
+                        formData.set('action', 'toggle-requires-cv');
+                        formData.set('category', selectedCategory.id);
+                        formData.set('requires-cv', event.target.checked);
+                        fetcher.submit(formData, {
+                          replace: false,
+                          method: 'post',
+                        });
+                      }}
+                    />
+                  </ListItemIcon>
+                  <ListItemText primary="ارسال رزومه اجباری باشد" />
+                </ListItem>
+                <Divider variant="inset" />
                 {selectedCategory.data?.questions.map((question) => (
                   <ListItem key={question.id}>
                     <ListItemText primary={question.title} />
