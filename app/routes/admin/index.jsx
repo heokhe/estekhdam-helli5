@@ -1,6 +1,6 @@
-import { Form, useLoaderData, Link } from '@remix-run/react';
-import { prisma } from '~/db.server';
-import { DataGrid } from '@mui/x-data-grid';
+import { Form, useLoaderData, Link } from '@remix-run/react'
+import { prisma } from '~/db.server'
+import { DataGrid } from '@mui/x-data-grid'
 import {
   Accordion,
   AccordionDetails,
@@ -12,8 +12,8 @@ import {
   Typography,
   Toolbar,
   Avatar,
-} from '@mui/material';
-import { useState } from 'react';
+} from '@mui/material'
+import { useState } from 'react'
 
 export async function loader() {
   const rawApplications = await prisma.application.findMany({
@@ -29,30 +29,30 @@ export async function loader() {
         },
       },
     },
-  });
-  const applications = rawApplications.map((application) => {
+  })
+  const applications = rawApplications.map(application => {
     return {
       ...application,
-      answers: application.answers.map((answer) => {
+      answers: application.answers.map(answer => {
         const question = application.category.data.questions.find(
-          (q) => q.id === answer.questionId
-        );
+          q => q.id === answer.questionId
+        )
         return {
           id: question.id,
           question: question.title,
           answer: answer.value,
-        };
+        }
       }),
-    };
-  });
-  return applications;
+    }
+  })
+  return applications
 }
 
 export default function Applications() {
   /** @type {Awaited<ReturnType<typeof loader>>} */
-  const applications = useLoaderData();
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [currentApplication, setCurrentApplication] = useState(null);
+  const applications = useLoaderData()
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [currentApplication, setCurrentApplication] = useState(null)
   return (
     <>
       <Toolbar>
@@ -74,7 +74,7 @@ export default function Applications() {
             {
               headerName: 'موقعیت شغلی',
               valueGetter: ({ row }) => {
-                return row.category.title;
+                return row.category.title
               },
               width: 200,
             },
@@ -87,7 +87,7 @@ export default function Applications() {
               align: 'center',
               headerAlign: 'center',
               renderCell: ({ value: imageAddress }) => {
-                return <Avatar src={imageAddress} />;
+                return <Avatar src={imageAddress} />
               },
             },
             {
@@ -128,8 +128,8 @@ export default function Applications() {
                     variant="contained"
                     disableElevation
                     onClick={() => {
-                      setDialogOpen(true);
-                      setCurrentApplication(row);
+                      setDialogOpen(true)
+                      setCurrentApplication(row)
                     }}
                   >
                     مشاهده پاسخ‌ها
@@ -147,7 +147,7 @@ export default function Applications() {
                   ) : (
                     <></>
                   ),
-                ];
+                ]
               },
               flex: 1,
             },
@@ -175,5 +175,5 @@ export default function Applications() {
         </Dialog>
       </div>
     </>
-  );
+  )
 }

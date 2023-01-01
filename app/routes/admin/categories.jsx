@@ -1,5 +1,5 @@
-import { Form, useLoaderData, useFetcher } from '@remix-run/react';
-import { prisma } from '~/db.server';
+import { Form, useLoaderData, useFetcher } from '@remix-run/react'
+import { prisma } from '~/db.server'
 import {
   Button,
   Dialog,
@@ -21,14 +21,14 @@ import {
   DialogContent,
   DialogContentText,
   ListItemIcon,
-} from '@mui/material';
-import { useState, useEffect } from 'react';
-import EditOutlined from '@mui/icons-material/EditOutlined';
-import Add from '@mui/icons-material/Add';
-import DeleteOutline from '@mui/icons-material/DeleteOutline';
-import { CategoryList } from '~/components/CategoryList';
-import { json } from '@remix-run/server-runtime';
-import { Box } from '@mui/system';
+} from '@mui/material'
+import { useState, useEffect } from 'react'
+import EditOutlined from '@mui/icons-material/EditOutlined'
+import Add from '@mui/icons-material/Add'
+import DeleteOutline from '@mui/icons-material/DeleteOutline'
+import { CategoryList } from '~/components/CategoryList'
+import { json } from '@remix-run/server-runtime'
+import { Box } from '@mui/system'
 
 export async function loader() {
   const categories = await prisma.category.findMany({
@@ -50,53 +50,53 @@ export async function loader() {
       applications: false,
     },
     where: { parent: null },
-  });
-  return categories;
+  })
+  return categories
 }
 
 function findCategory(categories, id) {
-  if (!categories) return undefined;
+  if (!categories) return undefined
   for (const category of categories) {
     if (category.id === id) {
-      return category;
+      return category
     } else if (category.subcategories) {
-      const innerCat = findCategory(category.subcategories, id);
-      if (innerCat) return innerCat;
+      const innerCat = findCategory(category.subcategories, id)
+      if (innerCat) return innerCat
     }
   }
-  return undefined;
+  return undefined
 }
 
 export async function action({ request }) {
-  const formData = await request.formData();
-  console.log(Object.fromEntries(formData.entries()));
-  const action = formData.get('action');
+  const formData = await request.formData()
+  console.log(Object.fromEntries(formData.entries()))
+  const action = formData.get('action')
   if (action === 'new-question') {
-    const categoryId = parseInt(formData.get('category'));
+    const categoryId = parseInt(formData.get('category'))
     const category = await prisma.category.findUnique({
       where: { id: categoryId },
       include: { data: true },
-    });
-    const questionTitle = formData.get('question');
+    })
+    const questionTitle = formData.get('question')
     const question = await prisma.question.create({
       data: {
         title: questionTitle,
         categoryDataId: category.data.id,
       },
-    });
-    return json(question);
+    })
+    return json(question)
   }
   if (action === 'new-category') {
-    const parentId = formData.get('parentId');
-    const hasParent = parentId && parentId !== 'undefined';
-    const title = formData.get('title');
-    const hasSubcategories = formData.get('hasSubcategories') === 'true';
+    const parentId = formData.get('parentId')
+    const hasParent = parentId && parentId !== 'undefined'
+    const title = formData.get('title')
+    const hasSubcategories = formData.get('hasSubcategories') === 'true'
     const newCategory = await prisma.category.create({
       data: {
         title,
         ...(hasParent && { parentId: parseInt(parentId) }),
       },
-    });
+    })
     if (!hasSubcategories) {
       await prisma.categoryData.create({
         data: {
@@ -106,12 +106,12 @@ export async function action({ request }) {
             },
           },
         },
-      });
+      })
     }
-    return json(newCategory);
+    return json(newCategory)
   }
   if (action === 'delete-category') {
-    const categoryId = parseInt(formData.get('category'));
+    const categoryId = parseInt(formData.get('category'))
     // await prisma.categoryData.deleteMany({
     //   where: {
     //     Category: {
@@ -125,12 +125,12 @@ export async function action({ request }) {
       where: {
         id: categoryId,
       },
-    });
-    return json({});
+    })
+    return json({})
   }
   if (action === 'toggle-requires-cv') {
-    const categoryId = parseInt(formData.get('category'));
-    const requires = formData.get('requires-cv') === 'true';
+    const categoryId = parseInt(formData.get('category'))
+    const requires = formData.get('requires-cv') === 'true'
     await prisma.categoryData.updateMany({
       where: {
         Category: {
@@ -142,30 +142,30 @@ export async function action({ request }) {
       data: {
         requiresCV: requires,
       },
-    });
-    return json({});
+    })
+    return json({})
   }
 }
 
 function AddCategoryDialog({ open, onClose, parentCategory, onSubmit }) {
-  const [title, setTitle] = useState('');
-  const [hasSubcategories, setHasSubcategories] = useState(false);
+  const [title, setTitle] = useState('')
+  const [hasSubcategories, setHasSubcategories] = useState(false)
   function submit() {
-    if (!title) return;
-    const formData = new FormData();
-    formData.set('action', 'new-category');
-    formData.set('parentId', parentCategory?.id);
-    formData.set('title', title);
-    formData.set('hasSubcategories', hasSubcategories);
-    onSubmit(formData);
-    onClose();
+    if (!title) return
+    const formData = new FormData()
+    formData.set('action', 'new-category')
+    formData.set('parentId', parentCategory?.id)
+    formData.set('title', title)
+    formData.set('hasSubcategories', hasSubcategories)
+    onSubmit(formData)
+    onClose()
   }
   useEffect(() => {
     if (!open) {
-      setTitle('');
-      setHasSubcategories(false);
+      setTitle('')
+      setHasSubcategories(false)
     }
-  }, [open]);
+  }, [open])
   return (
     <Dialog
       open={open}
@@ -185,7 +185,7 @@ function AddCategoryDialog({ open, onClose, parentCategory, onSubmit }) {
           fullWidth
           autoFocus
           value={title}
-          onInput={(event) => setTitle(event.target.value)}
+          onInput={event => setTitle(event.target.value)}
           autoComplete="off"
         />
         <FormGroup sx={{ my: 1, display: 'block' }}>
@@ -193,7 +193,7 @@ function AddCategoryDialog({ open, onClose, parentCategory, onSubmit }) {
             control={
               <Checkbox
                 checked={hasSubcategories}
-                onChange={(event) => setHasSubcategories(event.target.checked)}
+                onChange={event => setHasSubcategories(event.target.checked)}
               />
             }
             label="می‌تواند زیرشاخه داشته باشد"
@@ -208,17 +208,17 @@ function AddCategoryDialog({ open, onClose, parentCategory, onSubmit }) {
         <Button onClick={submit}>ایجاد دسته‌بندی</Button>
       </DialogActions>
     </Dialog>
-  );
+  )
 }
 
 function DeleteCategoryDialog({ open, onClose, onDelete, category }) {
   const handleDelete = () => {
-    const formData = new FormData();
-    formData.set('action', 'delete-category');
-    formData.set('category', category.id);
-    onDelete(formData);
-    onClose();
-  };
+    const formData = new FormData()
+    formData.set('action', 'delete-category')
+    formData.set('category', category.id)
+    onDelete(formData)
+    onClose()
+  }
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs">
@@ -242,19 +242,19 @@ function DeleteCategoryDialog({ open, onClose, onDelete, category }) {
         </Button>
       </DialogActions>
     </Dialog>
-  );
+  )
 }
 
 export default function Categories() {
-  const fetcher = useFetcher();
+  const fetcher = useFetcher()
   /** @type {Awaited<ReturnType<typeof loader>>} */
-  const categories = useLoaderData();
-  const [addCategoryDialogOpen, setAddCategoryDialogOpen] = useState(false);
-  const [addCategoryDialogParent, setAddCategoryDialogParent] = useState(null);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [deleteCategory, setDeleteCategory] = useState(null);
-  const [selectedCategoryId, setSelectedCategoryId] = useState(-1);
-  const selectedCategory = findCategory(categories, selectedCategoryId);
+  const categories = useLoaderData()
+  const [addCategoryDialogOpen, setAddCategoryDialogOpen] = useState(false)
+  const [addCategoryDialogParent, setAddCategoryDialogParent] = useState(null)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [deleteCategory, setDeleteCategory] = useState(null)
+  const [selectedCategoryId, setSelectedCategoryId] = useState(-1)
+  const selectedCategory = findCategory(categories, selectedCategoryId)
   return (
     <>
       <Grid container>
@@ -262,7 +262,7 @@ export default function Categories() {
           <CategoryList
             maximumVisibleDepth={Infinity}
             categories={categories}
-            renderFinalItem={(category) => (
+            renderFinalItem={category => (
               <ListItemButton
                 key={`c${category.id}`}
                 selected={category.id === selectedCategoryId}
@@ -273,28 +273,28 @@ export default function Categories() {
                 </IconButton>
                 <IconButton
                   onClick={() => {
-                    setDeleteCategory(category);
-                    setDeleteDialogOpen(true);
+                    setDeleteCategory(category)
+                    setDeleteDialogOpen(true)
                   }}
                 >
                   <DeleteOutline />
                 </IconButton>
               </ListItemButton>
             )}
-            parentItemActions={(category) => (
+            parentItemActions={category => (
               <>
                 <IconButton
                   onClick={() => {
-                    setDeleteCategory(category);
-                    setDeleteDialogOpen(true);
+                    setDeleteCategory(category)
+                    setDeleteDialogOpen(true)
                   }}
                 >
                   <DeleteOutline />
                 </IconButton>
                 <IconButton
                   onClick={() => {
-                    setAddCategoryDialogOpen(true);
-                    setAddCategoryDialogParent(category);
+                    setAddCategoryDialogOpen(true)
+                    setAddCategoryDialogParent(category)
                   }}
                 >
                   <Add />
@@ -314,7 +314,7 @@ export default function Categories() {
               startIcon={<Add />}
               size="large"
               onClick={() => {
-                setAddCategoryDialogOpen(true);
+                setAddCategoryDialogOpen(true)
               }}
             >
               افزودن دسته‌بندی جدید
@@ -332,22 +332,22 @@ export default function Categories() {
                   <ListItemIcon>
                     <Checkbox
                       defaultChecked={selectedCategory.data.requiresCV}
-                      onChange={(event) => {
-                        const formData = new FormData();
-                        formData.set('action', 'toggle-requires-cv');
-                        formData.set('category', selectedCategory.id);
-                        formData.set('requires-cv', event.target.checked);
+                      onChange={event => {
+                        const formData = new FormData()
+                        formData.set('action', 'toggle-requires-cv')
+                        formData.set('category', selectedCategory.id)
+                        formData.set('requires-cv', event.target.checked)
                         fetcher.submit(formData, {
                           replace: false,
                           method: 'post',
-                        });
+                        })
                       }}
                     />
                   </ListItemIcon>
                   <ListItemText primary="ارسال رزومه اجباری باشد" />
                 </ListItem>
                 <Divider variant="inset" />
-                {selectedCategory.data?.questions.map((question) => (
+                {selectedCategory.data?.questions.map(question => (
                   <ListItem key={question.id}>
                     <ListItemText primary={question.title} />
                   </ListItem>
@@ -393,18 +393,18 @@ export default function Categories() {
         open={deleteDialogOpen}
         category={deleteCategory}
         onClose={() => setDeleteDialogOpen(false)}
-        onDelete={(data) => {
-          fetcher.submit(data, { method: 'post', replace: true });
+        onDelete={data => {
+          fetcher.submit(data, { method: 'post', replace: true })
         }}
       />
       <AddCategoryDialog
         open={addCategoryDialogOpen}
         parentCategory={addCategoryDialogParent}
         onClose={() => setAddCategoryDialogOpen(false)}
-        onSubmit={(data) => {
-          fetcher.submit(data, { method: 'post', replace: true });
+        onSubmit={data => {
+          fetcher.submit(data, { method: 'post', replace: true })
         }}
       />
     </>
-  );
+  )
 }

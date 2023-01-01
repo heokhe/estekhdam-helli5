@@ -1,17 +1,17 @@
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcryptjs'
 
-import { prisma } from '~/db.server';
+import { prisma } from '~/db.server'
 
 export async function getUserById(id) {
-  return prisma.user.findUnique({ where: { id } });
+  return prisma.user.findUnique({ where: { id } })
 }
 
 export async function getUserByEmail(email) {
-  return prisma.user.findUnique({ where: { email } });
+  return prisma.user.findUnique({ where: { email } })
 }
 
 export async function createUser(email, password) {
-  const hashedPassword = await bcrypt.hash(password, 10);
+  const hashedPassword = await bcrypt.hash(password, 10)
 
   return prisma.user.create({
     data: {
@@ -22,11 +22,11 @@ export async function createUser(email, password) {
         },
       },
     },
-  });
+  })
 }
 
 export async function deleteUserByEmail(email) {
-  return prisma.user.delete({ where: { email } });
+  return prisma.user.delete({ where: { email } })
 }
 
 export async function verifyLogin(email, password) {
@@ -35,22 +35,19 @@ export async function verifyLogin(email, password) {
     include: {
       password: true,
     },
-  });
+  })
 
   if (!userWithPassword || !userWithPassword.password) {
-    return null;
+    return null
   }
 
-  const isValid = await bcrypt.compare(
-    password,
-    userWithPassword.password.hash,
-  );
+  const isValid = await bcrypt.compare(password, userWithPassword.password.hash)
 
   if (!isValid) {
-    return null;
+    return null
   }
 
-  const { password: _password, ...userWithoutPassword } = userWithPassword;
+  const { password: _password, ...userWithoutPassword } = userWithPassword
 
-  return userWithoutPassword;
+  return userWithoutPassword
 }

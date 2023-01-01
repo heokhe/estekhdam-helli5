@@ -1,48 +1,48 @@
-import { json, redirect } from '@remix-run/node';
-import { Form, useActionData } from '@remix-run/react';
-import * as React from 'react';
+import { json, redirect } from '@remix-run/node'
+import { Form, useActionData } from '@remix-run/react'
+import * as React from 'react'
 
-import { createNote } from '~/models/note.server';
-import { requireUserId } from '~/session.server';
+import { createNote } from '~/models/note.server'
+import { requireUserId } from '~/session.server'
 
 export async function action({ request }) {
-  const userId = await requireUserId(request);
+  const userId = await requireUserId(request)
 
-  const formData = await request.formData();
-  const title = formData.get('title');
-  const body = formData.get('body');
+  const formData = await request.formData()
+  const title = formData.get('title')
+  const body = formData.get('body')
 
   if (typeof title !== 'string' || title.length === 0) {
     return json(
       { errors: { title: 'Title is required', body: null } },
-      { status: 400 },
-    );
+      { status: 400 }
+    )
   }
 
   if (typeof body !== 'string' || body.length === 0) {
     return json(
       { errors: { title: null, body: 'Body is required' } },
-      { status: 400 },
-    );
+      { status: 400 }
+    )
   }
 
-  const note = await createNote({ title, body, userId });
+  const note = await createNote({ title, body, userId })
 
-  return redirect(`/notes/${note.id}`);
+  return redirect(`/notes/${note.id}`)
 }
 
 export default function NewNotePage() {
-  const actionData = useActionData();
-  const titleRef = React.useRef(null);
-  const bodyRef = React.useRef(null);
+  const actionData = useActionData()
+  const titleRef = React.useRef(null)
+  const bodyRef = React.useRef(null)
 
   React.useEffect(() => {
     if (actionData?.errors?.title) {
-      titleRef.current?.focus();
+      titleRef.current?.focus()
     } else if (actionData?.errors?.body) {
-      bodyRef.current?.focus();
+      bodyRef.current?.focus()
     }
-  }, [actionData]);
+  }, [actionData])
 
   return (
     <Form
@@ -104,5 +104,5 @@ export default function NewNotePage() {
         </button>
       </div>
     </Form>
-  );
+  )
 }

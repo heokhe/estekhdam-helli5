@@ -1,10 +1,10 @@
-import { prisma } from '~/db.server';
+import { prisma } from '~/db.server'
 
 export function getNote({ id, userId }) {
   return prisma.note.findFirst({
     select: { id: true, body: true, title: true },
     where: { id, userId },
-  });
+  })
 }
 
 export function getNoteListItems({ userId }) {
@@ -12,7 +12,7 @@ export function getNoteListItems({ userId }) {
     where: { userId },
     select: { id: true, title: true },
     orderBy: { updatedAt: 'desc' },
-  });
+  })
 }
 
 export function createNote({ body, title, userId }) {
@@ -26,11 +26,11 @@ export function createNote({ body, title, userId }) {
         },
       },
     },
-  });
+  })
 }
 
 export function deleteNote({ id, userId }) {
   return prisma.note.deleteMany({
     where: { id, userId },
-  });
+  })
 }

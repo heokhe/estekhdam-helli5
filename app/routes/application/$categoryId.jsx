@@ -1,6 +1,6 @@
-import { Form, Link, useActionData, useLoaderData } from '@remix-run/react';
-import { prisma } from '~/db.server';
-import { z } from 'zod';
+import { Form, Link, useActionData, useLoaderData } from '@remix-run/react'
+import { prisma } from '~/db.server'
+import { z } from 'zod'
 import {
   Button,
   Container,
@@ -11,22 +11,22 @@ import {
   Stack,
   Breadcrumbs,
   Grid,
-} from '@mui/material';
-import ArrowForward from '@mui/icons-material/ArrowForward';
-import CheckCircleOutline from '@mui/icons-material/CheckCircleOutline';
+} from '@mui/material'
+import ArrowForward from '@mui/icons-material/ArrowForward'
+import CheckCircleOutline from '@mui/icons-material/CheckCircleOutline'
 import {
   json,
   redirect,
   unstable_composeUploadHandlers,
   unstable_createMemoryUploadHandler,
   unstable_parseMultipartFormData,
-} from '@remix-run/server-runtime';
-import { unstable_createFileUploadHandler } from '@remix-run/node';
-import { useEffect } from 'react';
-import { ImagePicker } from '~/components/ImagePicker';
+} from '@remix-run/server-runtime'
+import { unstable_createFileUploadHandler } from '@remix-run/node'
+import { useEffect } from 'react'
+import { ImagePicker } from '~/components/ImagePicker'
 
 export async function loader({ params }) {
-  const categoryId = parseInt(params.categoryId);
+  const categoryId = parseInt(params.categoryId)
   const category = await prisma.category.findUnique({
     where: { id: categoryId },
     include: {
@@ -38,26 +38,26 @@ export async function loader({ params }) {
         },
       },
     },
-  });
+  })
   if (!category) {
-    throw new Response(undefined, { status: 404 });
+    throw new Response(undefined, { status: 404 })
   }
   if (!category.data) {
-    throw redirect('/');
+    throw redirect('/')
   }
-  let temp = category;
-  const list = [category];
+  let temp = category
+  const list = [category]
   do {
-    temp = temp.parent;
+    temp = temp.parent
     if (temp) {
-      list.push(temp);
+      list.push(temp)
     }
-  } while (temp);
-  return [category, list.reverse()];
+  } while (temp)
+  return [category, list.reverse()]
 }
 
 export async function action({ request, params }) {
-  const categoryId = parseInt(params.categoryId);
+  const categoryId = parseInt(params.categoryId)
   const category = await prisma.category.findUnique({
     where: { id: categoryId },
     include: {
@@ -67,9 +67,9 @@ export async function action({ request, params }) {
         },
       },
     },
-  });
+  })
   if (!category) {
-    throw new Response(undefined, { status: 404 });
+    throw new Response(undefined, { status: 404 })
   }
 
   const uploadHandler = unstable_composeUploadHandlers(
@@ -87,17 +87,14 @@ export async function action({ request, params }) {
     }),
     // parse everything else into memory
     unstable_createMemoryUploadHandler()
-  );
-  const formData = await unstable_parseMultipartFormData(
-    request,
-    uploadHandler
-  );
-  const name = formData.get('name');
-  const lastName = formData.get('lastName');
-  const email = formData.get('email');
-  const phoneNumber = formData.get('phoneNumber');
-  const cv = formData.get('cv');
-  const image = formData.get('image');
+  )
+  const formData = await unstable_parseMultipartFormData(request, uploadHandler)
+  const name = formData.get('name')
+  const lastName = formData.get('lastName')
+  const email = formData.get('email')
+  const phoneNumber = formData.get('phoneNumber')
+  const cv = formData.get('cv')
+  const image = formData.get('image')
 
   try {
     z.object({
@@ -117,26 +114,26 @@ export async function action({ request, params }) {
       lastName,
       email,
       phoneNumber,
-    });
+    })
   } catch (error) {
-    throw json({ errors: error.issues }, { status: 400 });
+    throw json({ errors: error.issues }, { status: 400 })
   }
   if (!category.data.requiresCV && !cv.name) {
     throw json(
       { errors: [{ message: 'ارسال فایل رزومه الزامی است' }] },
       { status: 400 }
-    );
+    )
   }
   if (!image.name) {
     throw json(
       { errors: [{ message: 'ارسال عکس پرسنلی الزامی است' }] },
       { status: 400 }
-    );
+    )
   }
 
   const answerEntries = [...formData.entries('answer')].filter(([fieldName]) =>
     fieldName.startsWith('answer-')
-  );
+  )
 
   const application = await prisma.application.create({
     data: {
@@ -154,18 +151,18 @@ export async function action({ request, params }) {
       }),
       imageAddress: `/uploads/${image.name}`,
     },
-  });
+  })
 
   for (const question of category.data.questions) {
     const [, answerValue] =
       answerEntries.find(
         ([fieldName]) => fieldName === `answer-${question.id}`
-      ) ?? [];
+      ) ?? []
     if (!answerValue) {
       throw json(
         { errors: [{ message: `لطفاً به تمام سوالات پاسخ دهید` }] },
         { status: 400 }
-      );
+      )
     }
     await prisma.answer.create({
       data: {
@@ -181,22 +178,22 @@ export async function action({ request, params }) {
           },
         },
       },
-    });
+    })
   }
 
-  return redirect('/application/done');
+  return redirect('/application/done')
 }
 
 export default function ApplicationForm() {
   /** @type {Awaited<ReturnType<typeof loader>>} */
-  const [category, list] = useLoaderData();
-  const actionData = useActionData();
+  const [category, list] = useLoaderData()
+  const actionData = useActionData()
   useEffect(() => {
     if (actionData) {
-      console.log(actionData);
+      console.log(actionData)
     }
-  }, [actionData]);
-  const { requiresCV } = category.data;
+  }, [actionData])
+  const { requiresCV } = category.data
   return (
     <>
       <Toolbar
@@ -215,7 +212,7 @@ export default function ApplicationForm() {
       <Container maxWidth="xs">
         <Form method="post" encType="multipart/form-data">
           <Breadcrumbs sx={{ my: 4 }}>
-            {list.map((l) => (
+            {list.map(l => (
               <span key={l.id} href="/">
                 {l.title}
               </span>
@@ -259,7 +256,7 @@ export default function ApplicationForm() {
           </Stack>
           <Stack gap={2} sx={{ mt: 4 }}>
             <Typography variant="h5">سوالات مربوط به حوزه کاری</Typography>
-            {category.data.questions.map((question) => (
+            {category.data.questions.map(question => (
               <TextField
                 multiline
                 minRows={3}
@@ -291,5 +288,5 @@ export default function ApplicationForm() {
         </Form>
       </Container>
     </>
-  );
+  )
 }

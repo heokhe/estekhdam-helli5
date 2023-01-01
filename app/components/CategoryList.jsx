@@ -4,10 +4,10 @@ import {
   ListItemText,
   Collapse,
   IconButton,
-} from '@mui/material';
-import ExpandMore from '@mui/icons-material/ExpandMore';
-import ExpandLess from '@mui/icons-material/ExpandLess';
-import { useState } from 'react';
+} from '@mui/material'
+import ExpandMore from '@mui/icons-material/ExpandMore'
+import ExpandLess from '@mui/icons-material/ExpandLess'
+import { useState } from 'react'
 
 function ListItemWithNestedList({
   list,
@@ -16,12 +16,15 @@ function ListItemWithNestedList({
   initiallyOpen = false,
   ...props
 }) {
-  const [open, setOpen] = useState(initiallyOpen);
-  const toggle = () => setOpen(!open);
-  const listItemIsClickable = actions.length === 0;
+  const [open, setOpen] = useState(initiallyOpen)
+  const toggle = () => setOpen(!open)
+  const listItemIsClickable = actions.length === 0
   return (
     <>
-      <ListItemButton {...props} onClick={listItemIsClickable ? toggle : undefined}>
+      <ListItemButton
+        {...props}
+        onClick={listItemIsClickable ? toggle : undefined}
+      >
         {children}
         {actions}
         <IconButton onClick={!listItemIsClickable ? toggle : undefined}>
@@ -30,7 +33,7 @@ function ListItemWithNestedList({
       </ListItemButton>
       <Collapse in={open}>{list}</Collapse>
     </>
-  );
+  )
 }
 
 export function CategoryList({
@@ -43,7 +46,7 @@ export function CategoryList({
 }) {
   return (
     <List disablePadding {...props}>
-      {categories.map((category) =>
+      {categories.map(category =>
         category.subcategories ? (
           <ListItemWithNestedList
             initiallyOpen={_depth < maximumVisibleDepth}
@@ -65,8 +68,8 @@ export function CategoryList({
           </ListItemWithNestedList>
         ) : (
           renderFinalItem(category)
-        ),
+        )
       )}
     </List>
-  );
+  )
 }

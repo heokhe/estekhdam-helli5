@@ -1,3 +1,3 @@
 export default function ApplicationDone() {
-  return <h1>ممنون!</h1>;
+  return <h1>ممنون!</h1>
 }

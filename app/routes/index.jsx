@@ -1,19 +1,19 @@
-import { Link, useLoaderData } from '@remix-run/react';
+import { Link, useLoaderData } from '@remix-run/react'
 import {
   Container,
   ListItemButton,
   ListItemText,
   Paper,
   Typography,
-} from '@mui/material';
-import ExpandMore from '@mui/icons-material/ExpandMore';
-import ExpandLess from '@mui/icons-material/ExpandLess';
-import ArrowBack from '@mui/icons-material/ArrowBack';
-import { prisma } from '~/db.server';
-import { useState } from 'react';
-import logo from '~/public/logo.svg';
-import { Logo } from '~/components/icons/Logo';
-import { CategoryList } from '~/components/CategoryList';
+} from '@mui/material'
+import ExpandMore from '@mui/icons-material/ExpandMore'
+import ExpandLess from '@mui/icons-material/ExpandLess'
+import ArrowBack from '@mui/icons-material/ArrowBack'
+import { prisma } from '~/db.server'
+import { useState } from 'react'
+import logo from '~/public/logo.svg'
+import { Logo } from '~/components/icons/Logo'
+import { CategoryList } from '~/components/CategoryList'
 
 export async function loader() {
   return await prisma.category.findMany({
@@ -27,12 +27,12 @@ export async function loader() {
       applications: false,
     },
     where: { parent: null },
-  });
+  })
 }
 
 export default function Index() {
   /** @type {Awaited<ReturnType<typeof loader>>} */
-  const rootCategories = useLoaderData();
+  const rootCategories = useLoaderData()
   return (
     <Container maxWidth={false} sx={{ textAlign: 'center', py: 5 }}>
       <img src={logo} alt="لوگوی دبیرستان علامه حلی پنج" width="10%" />
@@ -47,7 +47,7 @@ export default function Index() {
           <CategoryList
             maximumVisibleDepth={1}
             categories={rootCategories}
-            renderFinalItem={(category) => (
+            renderFinalItem={category => (
               <ListItemButton
                 component={Link}
                 to={`application/${category.id}`}
@@ -61,5 +61,5 @@ export default function Index() {
         </Paper>
       </Container>
     </Container>
-  );
+  )
 }
