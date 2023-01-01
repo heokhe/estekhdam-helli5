@@ -11,10 +11,8 @@ import {
   Stack,
   Breadcrumbs,
   Grid,
-  Avatar,
 } from '@mui/material';
 import ArrowForward from '@mui/icons-material/ArrowForward';
-import AddAPhotoOutlined from '@mui/icons-material/AddAPhotoOutlined';
 import CheckCircleOutline from '@mui/icons-material/CheckCircleOutline';
 import {
   json,
@@ -25,6 +23,7 @@ import {
 } from '@remix-run/server-runtime';
 import { unstable_createFileUploadHandler } from '@remix-run/node';
 import { useEffect } from 'react';
+import { ImagePicker } from '~/components/ImagePicker';
 
 export async function loader({ params }) {
   const categoryId = parseInt(params.categoryId);
@@ -225,14 +224,11 @@ export default function ApplicationForm() {
           <Stack gap={2}>
             <Typography variant="h5">مشخصات فردی</Typography>
             <Stack direction="row" gap={1}>
-              <Grid container gap={2} flexWrap="nowrap">
+              <Grid container gap={2} flexWrap="nowrap" alignItems="center">
                 <Grid item xs="auto" sx={{ textAlign: 'center' }}>
-                  <input type="file" name="image" accept="image/*" required id="image-input" style={{ display: 'none' }} />
-                  <Avatar component="label" htmlFor="image-input" sx={{ width: 80, height: 80, bgcolor: 'primary.light', mx: 'auto', mb: 1 }}>
-                    <AddAPhotoOutlined sx={{ fontSize: 32 }} />
-                  </Avatar>
+                  <ImagePicker required size={64} />
                   <Typography variant="caption" color="text.secondary">
-                    عکس پرسنلی (حداکثر حجم: ۵ مگابایت)
+                    عکس پرسنلی (حداکثر ۵ مگابایت)
                   </Typography>
                 </Grid>
                 <Grid item xs={12}>
