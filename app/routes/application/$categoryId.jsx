@@ -196,7 +196,7 @@ export default function ApplicationForm() {
       console.log(actionData);
     }
   }, [actionData]);
-  const { requiresCv } = category.data;
+  const { requiresCV } = category.data;
   return (
     <>
       <Toolbar
@@ -272,11 +272,11 @@ export default function ApplicationForm() {
           </Stack>
           <Stack gap={1} sx={{ mt: 2 }}>
             <Typography variant="caption" color="text.secondary">
-              {!requiresCv
+              {!requiresCV
                 ? 'در صورت تمایل می‌توانید فایل رزومه خود را نیز ارسال کنید.'
                 : 'لطفا از بخش زیر فایل رزومه خود را نیز ضمیمه کنید.'}
             </Typography>
-            <input type="file" name="cv" accept=".pdf" required={requiresCv} />
+            <input type="file" name="cv" accept=".pdf" required={requiresCV} />
           </Stack>
           <Button
             sx={{ mx: 'auto', my: 3, display: 'flex' }}
