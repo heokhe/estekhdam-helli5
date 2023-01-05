@@ -175,8 +175,7 @@ function AddCategoryDialog({ open, onClose, parentCategory, onSubmit }) {
       TransitionProps={{ unmountOnExit: true }}
     >
       <DialogTitle>
-        اضافه کردن دسته‌بندی
-        {parentCategory && `به «${parentCategory?.title}»`}
+        اضافه کردن دسته‌بندی {parentCategory && `به «${parentCategory?.title}»`}
       </DialogTitle>
       <DialogContent>
         <TextField
