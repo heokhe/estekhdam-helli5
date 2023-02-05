@@ -47,7 +47,9 @@ export function CategoryList({
   return (
     <List disablePadding {...props}>
       {categories.map(category =>
-        category.subcategories ? (
+        category.data ? (
+          renderFinalItem(category)
+        ) : (
           <ListItemWithNestedList
             initiallyOpen={_depth < maximumVisibleDepth}
             key={category.id}
@@ -56,7 +58,7 @@ export function CategoryList({
                 key={`${category.id}children`}
                 _depth={_depth + 1}
                 maximumVisibleDepth={maximumVisibleDepth}
-                categories={category.subcategories}
+                categories={category.subcategories ?? []}
                 renderFinalItem={renderFinalItem}
                 parentItemActions={parentItemActions}
                 sx={{ ml: 2, borderLeft: 1, borderColor: 'divider' }}
@@ -66,8 +68,6 @@ export function CategoryList({
           >
             <ListItemText primary={category.title} />
           </ListItemWithNestedList>
-        ) : (
-          renderFinalItem(category)
         )
       )}
     </List>
