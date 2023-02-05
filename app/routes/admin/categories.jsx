@@ -93,18 +93,18 @@ export async function action({ request }) {
   }
   if (action === 'delete-category') {
     const categoryId = parseInt(formData.get('category'))
-    // await prisma.categoryData.deleteMany({
-    //   where: {
-    //     Category: {
-    //       every: {
-    //         id: categoryId
-    //       }
-    //     }
-    //   }
-    // })
     await prisma.category.delete({
       where: {
         id: categoryId,
+      },
+    })
+    await prisma.categoryData.deleteMany({
+      where: {
+        Category: {
+          every: {
+            id: categoryId,
+          },
+        },
       },
     })
     return json({})
