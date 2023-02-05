@@ -257,7 +257,18 @@ export default function Categories() {
   return (
     <>
       <Grid container>
-        <Grid item xs={5} sx={{ borderRight: 1, borderColor: 'divider' }}>
+        <Grid
+          item
+          xs={12}
+          md={5}
+          sx={{
+            borderWidth: 0,
+            borderRightWidth: { xs: 0, md: 1 },
+            borderBottomWidth: { xs: 1, md: 0 },
+            borderColor: 'divider',
+            borderStyle: 'solid',
+          }}
+        >
           <CategoryList
             maximumVisibleDepth={Infinity}
             categories={categories}
@@ -301,26 +312,19 @@ export default function Categories() {
               </>
             )}
           />
-          <Box
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            sx={{ my: 4 }}
+          <ListItemButton
+            sx={{ color: 'primary.main' }}
+            onClick={() => {
+              setAddCategoryDialogOpen(true)
+            }}
           >
-            <Button
-              variant="contained"
-              disableElevation
-              startIcon={<Add />}
-              size="large"
-              onClick={() => {
-                setAddCategoryDialogOpen(true)
-              }}
-            >
-              افزودن دسته‌بندی جدید
-            </Button>
-          </Box>
+            <ListItemIcon sx={{ color: 'inherit' }}>
+              <Add />
+            </ListItemIcon>
+            <ListItemText primary="افزودن دسته‌بندی جدید" />
+          </ListItemButton>
         </Grid>
-        <Grid item xs={7}>
+        <Grid item xs={12} md={7}>
           {selectedCategory ? (
             <>
               <Typography variant="h5" sx={{ mx: 2, my: 3 }}>
@@ -378,6 +382,7 @@ export default function Categories() {
             </>
           ) : (
             <Box
+              pt={5}
               sx={{ color: 'text.secondary' }}
               display="flex"
               alignItems="center"
