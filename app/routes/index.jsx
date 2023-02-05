@@ -14,20 +14,10 @@ import { useState } from 'react'
 import logo from '~/public/logo.svg'
 import { Logo } from '~/components/icons/Logo'
 import { CategoryList } from '~/components/CategoryList'
+import { getCategories } from '~/models/category.server'
 
 export async function loader() {
-  return await prisma.category.findMany({
-    include: {
-      subcategories: {
-        include: {
-          subcategories: true,
-        },
-      },
-      parent: true,
-      applications: false,
-    },
-    where: { parent: null },
-  })
+  return await getCategories()
 }
 
 export default function Index() {

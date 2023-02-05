@@ -29,29 +29,10 @@ import DeleteOutline from '@mui/icons-material/DeleteOutline'
 import { CategoryList } from '~/components/CategoryList'
 import { json } from '@remix-run/server-runtime'
 import { Box } from '@mui/system'
+import { getCategories } from '~/models/category.server'
 
 export async function loader() {
-  const categories = await prisma.category.findMany({
-    include: {
-      subcategories: {
-        include: {
-          subcategories: {
-            include: {
-              data: {
-                include: {
-                  questions: true,
-                },
-              },
-            },
-          },
-        },
-      },
-      parent: true,
-      applications: false,
-    },
-    where: { parent: null },
-  })
-  return categories
+  return await getCategories()
 }
 
 function findCategory(categories, id) {
