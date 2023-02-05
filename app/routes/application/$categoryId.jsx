@@ -223,7 +223,7 @@ export default function ApplicationForm() {
             <Stack direction="row" gap={1}>
               <Grid container gap={2} flexWrap="nowrap" alignItems="center">
                 <Grid item xs="auto" sx={{ textAlign: 'center' }}>
-                  <ImagePicker required size={64} />
+                  <ImagePicker required size={64} name="image" />
                   <Typography variant="caption" color="text.secondary">
                     عکس پرسنلی (حداکثر ۵ مگابایت)
                   </Typography>
