@@ -26,7 +26,7 @@ export default function Index() {
   return (
     <Container maxWidth={false} sx={{ textAlign: 'center', py: 5 }}>
       <img src={logo} alt="لوگوی دبیرستان علامه حلی پنج" width="10%" />
-      <Typography variant="h3" sx={{ my: 2 }}>
+      <Typography variant="h3" sx={{ mb: 2, mt: 3, fontWeight: 500 }}>
         استخدام در دبیرستان علامه حلی پنج
       </Typography>
       <Typography variant="h5" color="text.secondary">
