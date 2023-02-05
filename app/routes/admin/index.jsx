@@ -87,7 +87,16 @@ export default function Applications() {
               align: 'center',
               headerAlign: 'center',
               renderCell: ({ value: imageAddress }) => {
-                return <Avatar src={imageAddress} />
+                return imageAddress ? (
+                  <Avatar
+                    component="a"
+                    href={imageAddress}
+                    target="_blank"
+                    src={imageAddress}
+                  />
+                ) : (
+                  <Avatar />
+                )
               },
             },
             {
