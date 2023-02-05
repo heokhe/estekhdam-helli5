@@ -6,13 +6,8 @@ import {
   Paper,
   Typography,
 } from '@mui/material'
-import ExpandMore from '@mui/icons-material/ExpandMore'
-import ExpandLess from '@mui/icons-material/ExpandLess'
 import ArrowBack from '@mui/icons-material/ArrowBack'
-import { prisma } from '~/db.server'
-import { useState } from 'react'
 import logo from '~/public/logo.svg'
-import { Logo } from '~/components/icons/Logo'
 import { CategoryList } from '~/components/CategoryList'
 import { getCategories } from '~/models/category.server'
 
