@@ -2,6 +2,8 @@ import { Form, Outlet, useLoaderData } from '@remix-run/react'
 import bcrypt from 'bcryptjs'
 import { prisma } from '~/db.server'
 import { getSession, getUsername, setSession } from '~/cookie.server'
+import { Button, Container, TextField } from '@mui/material'
+import { Stack } from '@mui/system'
 
 async function isAuthed(request) {
   const username = await getUsername(request)
@@ -49,9 +51,25 @@ export default function AdminPage() {
   }
   return (
     <Form method="post">
-      <input name="username" />
-      <input name="password" type="password" />
-      <button type="submit">go</button>
+      <Container maxWidth="xs" sx={{ pt: 5, pb: 2 }}>
+        <Stack gap={2}>
+          <TextField name="username" placeholder="نام کاربری" required />
+          <TextField
+            name="password"
+            type="password"
+            placeholder="رمز عبور"
+            required
+          />
+          <Button
+            type="submit"
+            size="large"
+            variant="contained"
+            disableElevation
+          >
+            ورود
+          </Button>
+        </Stack>
+      </Container>
     </Form>
   )
 }
