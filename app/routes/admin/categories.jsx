@@ -1,4 +1,4 @@
-import { Form, useLoaderData, useFetcher } from '@remix-run/react'
+import { useLoaderData, useFetcher, Outlet, Link } from '@remix-run/react'
 import { prisma } from '~/db.server'
 import {
   Button,
@@ -6,14 +6,10 @@ import {
   DialogActions,
   DialogTitle,
   ListItemText,
-  ListItem,
   IconButton,
   Grid,
   ListItemButton,
   TextField,
-  List,
-  InputBase,
-  Divider,
   Typography,
   Checkbox,
   FormGroup,
@@ -28,45 +24,15 @@ import Add from '@mui/icons-material/Add'
 import DeleteOutline from '@mui/icons-material/DeleteOutline'
 import { CategoryList } from '~/components/CategoryList'
 import { json } from '@remix-run/server-runtime'
-import { Box } from '@mui/system'
 import { getCategories } from '~/models/category.server'
 
 export async function loader() {
   return await getCategories()
 }
 
-function findCategory(categories, id) {
-  if (!categories) return undefined
-  for (const category of categories) {
-    if (category.id === id) {
-      return category
-    } else if (category.subcategories) {
-      const innerCat = findCategory(category.subcategories, id)
-      if (innerCat) return innerCat
-    }
-  }
-  return undefined
-}
-
 export async function action({ request }) {
   const formData = await request.formData()
-  console.log(Object.fromEntries(formData.entries()))
   const action = formData.get('action')
-  if (action === 'new-question') {
-    const categoryId = parseInt(formData.get('category'))
-    const category = await prisma.category.findUnique({
-      where: { id: categoryId },
-      include: { data: true },
-    })
-    const questionTitle = formData.get('question')
-    const question = await prisma.question.create({
-      data: {
-        title: questionTitle,
-        categoryDataId: category.data.id,
-      },
-    })
-    return json(question)
-  }
   if (action === 'new-category') {
     const parentId = formData.get('parentId')
     const hasParent = parentId && parentId !== 'undefined'
@@ -105,23 +71,6 @@ export async function action({ request }) {
             id: categoryId,
           },
         },
-      },
-    })
-    return json({})
-  }
-  if (action === 'toggle-requires-cv') {
-    const categoryId = parseInt(formData.get('category'))
-    const requires = formData.get('requires-cv') === 'true'
-    await prisma.categoryData.updateMany({
-      where: {
-        Category: {
-          every: {
-            id: categoryId,
-          },
-        },
-      },
-      data: {
-        requiresCV: requires,
       },
     })
     return json({})
@@ -234,7 +183,7 @@ export default function Categories() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [deleteCategory, setDeleteCategory] = useState(null)
   const [selectedCategoryId, setSelectedCategoryId] = useState(-1)
-  const selectedCategory = findCategory(categories, selectedCategoryId)
+
   return (
     <>
       <Grid container>
@@ -259,7 +208,11 @@ export default function Categories() {
                 selected={category.id === selectedCategoryId}
               >
                 <ListItemText primary={category.title} />
-                <IconButton onClick={() => setSelectedCategoryId(category.id)}>
+                <IconButton
+                  LinkComponent={Link}
+                  to={`${category.id}`}
+                  onClick={() => setSelectedCategoryId(category.id)}
+                >
                   <EditOutlined />
                 </IconButton>
                 <IconButton
@@ -306,72 +259,7 @@ export default function Categories() {
           </ListItemButton>
         </Grid>
         <Grid item xs={12} md={7}>
-          {selectedCategory ? (
-            <>
-              <Typography variant="h5" sx={{ mx: 2, my: 3 }}>
-                ویرایش سوالات «{selectedCategory.title}»
-              </Typography>
-              <List disablePadding>
-                <ListItem key={`category-${selectedCategory.id}`}>
-                  <ListItemIcon>
-                    <Checkbox
-                      defaultChecked={selectedCategory.data.requiresCV}
-                      onChange={event => {
-                        const formData = new FormData()
-                        formData.set('action', 'toggle-requires-cv')
-                        formData.set('category', selectedCategory.id)
-                        formData.set('requires-cv', event.target.checked)
-                        fetcher.submit(formData, {
-                          replace: false,
-                          method: 'post',
-                        })
-                      }}
-                    />
-                  </ListItemIcon>
-                  <ListItemText primary="ارسال رزومه اجباری باشد" />
-                </ListItem>
-                <Divider variant="inset" />
-                {selectedCategory.data?.questions.map(question => (
-                  <ListItem key={question.id}>
-                    <ListItemText primary={question.title} />
-                  </ListItem>
-                ))}
-                <Form method="post">
-                  <input type="hidden" name="action" value="new-question" />
-                  <input
-                    type="hidden"
-                    name="category"
-                    value={selectedCategoryId}
-                  />
-                  <ListItem>
-                    <InputBase
-                      fullWidth
-                      autoComplete="off"
-                      placeholder="سوال جدید..."
-                      name="question"
-                    />
-                  </ListItem>
-                </Form>
-              </List>
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                sx={{ m: 2, mt: 1 }}
-              >
-                {selectedCategory.data?.questions.length ?? 0} سوال
-              </Typography>
-            </>
-          ) : (
-            <Box
-              pt={5}
-              sx={{ color: 'text.secondary' }}
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-            >
-              از سمت راست یک دسته‌بندی انتخاب کنید.
-            </Box>
-          )}
+          <Outlet />
         </Grid>
       </Grid>
       <DeleteCategoryDialog
