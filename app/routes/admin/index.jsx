@@ -12,6 +12,7 @@ import {
   Typography,
   Toolbar,
   Avatar,
+  Box,
 } from '@mui/material'
 import { useState } from 'react'
 
@@ -54,8 +55,8 @@ export default function Applications() {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [currentApplication, setCurrentApplication] = useState(null)
   return (
-    <>
-      <Toolbar>
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+      <Toolbar sx={{ flexShrink: 0 }}>
         <Typography variant="h6" sx={{ flexGrow: 1 }}>
           پنل ادمین
         </Typography>
@@ -66,8 +67,14 @@ export default function Applications() {
           <Button type="submit">خروج</Button>
         </Form>
       </Toolbar>
-      <div style={{ height: 600 }}>
+      <div style={{ height: '100%' }}>
         <DataGrid
+          sx={{
+            borderRight: 0,
+            borderLeft: 0,
+            borderBottom: 0,
+            borderRadius: 0,
+          }}
           checkboxSelection
           disableSelectionOnClick
           columns={[
@@ -183,6 +190,6 @@ export default function Applications() {
           </DialogActions>
         </Dialog>
       </div>
-    </>
+    </Box>
   )
 }
