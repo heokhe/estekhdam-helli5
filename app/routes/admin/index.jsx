@@ -60,7 +60,7 @@ export default function Applications() {
         <Typography variant="h6" sx={{ flexGrow: 1 }}>
           پنل ادمین
         </Typography>
-        <Button component={Link} to="categories">
+        <Button component={Link} to="categories" sx={{ mr: 1 }}>
           ویرایش دسته‌بندی‌ها
         </Button>
         <Form action="logout" method="post">
