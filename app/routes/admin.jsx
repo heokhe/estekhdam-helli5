@@ -5,6 +5,10 @@ import { getSession, getUsername, setSession } from '~/cookie.server'
 import { Button, Container, TextField } from '@mui/material'
 import { Stack } from '@mui/system'
 
+export const meta = () => ({
+  title: 'پنل ادمین',
+})
+
 async function isAuthed(request) {
   const username = await getUsername(request)
   if (!username) return false

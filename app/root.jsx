@@ -16,7 +16,7 @@ import styles from './styles/index.css'
 
 export const meta = () => ({
   charset: 'utf-8',
-  title: 'Remix Notes',
+  title: 'استخدام در دبیرستان علامه حلی پنج',
   viewport: 'width=device-width,initial-scale=1',
 })
 
