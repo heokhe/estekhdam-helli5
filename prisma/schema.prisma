@@ -51,18 +51,19 @@ model CategoryData {
 }
 
 model Application {
-  id             Int      @id @default(autoincrement())
-  time           DateTime @default(now())
-  categoryId     Int
-  name           String
-  lastName       String
-  phoneNumber    String
-  email          String?
-  marriageStatus Int
-  imageAddress   String
-  cvAddress      String?
-  category       Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  answers        Answer[]
+  id              Int      @id @default(autoincrement())
+  time            DateTime @default(now())
+  categoryId      Int
+  name            String
+  lastName        String
+  phoneNumber     String
+  email           String?
+  marriageStatus  Int
+  recruitmentType Int
+  imageAddress    String
+  cvAddress       String?
+  category        Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  answers         Answer[]
 }
 
 model Question {

@@ -99,6 +99,7 @@ export async function action({ request, params }) {
   const email = formData.get('email')
   const phoneNumber = formData.get('phoneNumber')
   const marriageStatus = parseInt(formData.get('marriage-status'))
+  const recruitmentType = parseInt(formData.get('recruitment-type'))
   const cv = formData.get('cv')
   const image = formData.get('image')
 
@@ -148,6 +149,7 @@ export async function action({ request, params }) {
       email,
       phoneNumber,
       marriageStatus,
+      recruitmentType,
       category: {
         connect: {
           id: categoryId,
@@ -272,6 +274,17 @@ export default function ApplicationForm() {
               <RadioGroup row name="marriage-status" defaultValue={0}>
                 <FormControlLabel value={0} control={<Radio />} label="مجرد" />
                 <FormControlLabel value={1} control={<Radio />} label="متأهل" />
+              </RadioGroup>
+            </FormControl>
+            <FormControl>
+              <FormLabel>نوع استخدام</FormLabel>
+              <RadioGroup row name="recruitment-type" defaultValue={0}>
+                <FormControlLabel
+                  value={0}
+                  control={<Radio />}
+                  label="رسمی - پیمانی"
+                />
+                <FormControlLabel value={1} control={<Radio />} label="آزاد" />
               </RadioGroup>
             </FormControl>
           </Stack>
