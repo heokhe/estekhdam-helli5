@@ -12,7 +12,8 @@ export default function ApplicationDone() {
       <Typography variant="h5" color="text.secondary">
         درخواست استخدام شما ثبت شد.
         <br />
-        همکاران ما پس از بررسی با شما تماس خواهند گرفت.
+        در صورت تایید اولیه، همکاران ما با شما جهت مصاحبه حضوری تماس خواهند
+        گرفت.
       </Typography>
       <Container maxWidth="sm" sx={{ mt: 3 }}>
         <MuiLink href="https://allamehelli5.ir" target="_blank">
