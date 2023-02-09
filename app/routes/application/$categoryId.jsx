@@ -230,11 +230,17 @@ export default function ApplicationForm() {
                 </Grid>
                 <Grid item xs={12}>
                   <Stack gap={2}>
-                    <TextField name="name" label="نام" variant="filled" />
+                    <TextField
+                      name="name"
+                      label="نام"
+                      variant="filled"
+                      required
+                    />
                     <TextField
                       name="lastName"
                       label="نام خانوادگی"
                       variant="filled"
+                      required
                     />
                   </Stack>
                 </Grid>
@@ -252,6 +258,7 @@ export default function ApplicationForm() {
               pattern="^09\d{9}$"
               variant="filled"
               name="phoneNumber"
+              required
             />
           </Stack>
           <Stack gap={2} sx={{ mt: 4 }}>
@@ -264,6 +271,7 @@ export default function ApplicationForm() {
                 label={question.title}
                 variant="filled"
                 name={`answer-${question.id}`}
+                required
               />
             ))}
           </Stack>
