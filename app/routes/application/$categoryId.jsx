@@ -11,6 +11,11 @@ import {
   Stack,
   Breadcrumbs,
   Grid,
+  FormControl,
+  FormLabel,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
 } from '@mui/material'
 import ArrowForward from '@mui/icons-material/ArrowForward'
 import CheckCircleOutline from '@mui/icons-material/CheckCircleOutline'
@@ -93,6 +98,7 @@ export async function action({ request, params }) {
   const lastName = formData.get('lastName')
   const email = formData.get('email')
   const phoneNumber = formData.get('phoneNumber')
+  const marriageStatus = parseInt(formData.get('marriage-status'))
   const cv = formData.get('cv')
   const image = formData.get('image')
 
@@ -141,6 +147,7 @@ export async function action({ request, params }) {
       lastName,
       email,
       phoneNumber,
+      marriageStatus,
       category: {
         connect: {
           id: categoryId,
@@ -260,6 +267,13 @@ export default function ApplicationForm() {
               name="phoneNumber"
               required
             />
+            <FormControl>
+              <FormLabel>وضعیت تأهل</FormLabel>
+              <RadioGroup row name="marriage-status" defaultValue={0}>
+                <FormControlLabel value={0} control={<Radio />} label="مجرد" />
+                <FormControlLabel value={1} control={<Radio />} label="متأهل" />
+              </RadioGroup>
+            </FormControl>
           </Stack>
           <Stack gap={2} sx={{ mt: 4 }}>
             <Typography variant="h5">سوالات مربوط به حوزه کاری</Typography>
