@@ -29,6 +29,7 @@ import {
 import { unstable_createFileUploadHandler } from '@remix-run/node'
 import { useEffect } from 'react'
 import { ImagePicker } from '~/components/ImagePicker'
+import { NamedDatePicker } from '~/components/NamedDatePicker'
 
 export async function loader({ params }) {
   const categoryId = parseInt(params.categoryId)
@@ -100,6 +101,7 @@ export async function action({ request, params }) {
   const phoneNumber = formData.get('phoneNumber')
   const marriageStatus = parseInt(formData.get('marriage-status'))
   const recruitmentType = parseInt(formData.get('recruitment-type'))
+  const birthDate = new Date(parseInt(formData.get('birth-date')))
   const cv = formData.get('cv')
   const image = formData.get('image')
 
@@ -150,6 +152,7 @@ export async function action({ request, params }) {
       phoneNumber,
       marriageStatus,
       recruitmentType,
+      birthDate,
       category: {
         connect: {
           id: categoryId,
@@ -267,6 +270,12 @@ export default function ApplicationForm() {
               pattern="^09\d{9}$"
               variant="filled"
               name="phoneNumber"
+              required
+            />
+            <NamedDatePicker
+              variant="filled"
+              label="تاریخ تولد"
+              name="birth-date"
               required
             />
             <FormControl>

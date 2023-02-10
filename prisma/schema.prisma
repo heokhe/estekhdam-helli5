@@ -60,6 +60,7 @@ model Application {
   email           String?
   marriageStatus  Int
   recruitmentType Int
+  birthDate       DateTime
   imageAddress    String
   cvAddress       String?
   category        Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
