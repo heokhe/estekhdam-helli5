@@ -59,6 +59,7 @@ model Application {
   phoneNumber     String
   email           String?
   marriageStatus  Int
+  khedmatType     Int
   recruitmentType Int
   birthDate       DateTime
   imageAddress    String

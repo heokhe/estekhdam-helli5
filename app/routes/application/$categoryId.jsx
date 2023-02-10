@@ -100,6 +100,7 @@ export async function action({ request, params }) {
   const email = formData.get('email')
   const phoneNumber = formData.get('phoneNumber')
   const marriageStatus = parseInt(formData.get('marriage-status'))
+  const khedmatStatus = parseInt(formData.get('khedmat-status'))
   const recruitmentType = parseInt(formData.get('recruitment-type'))
   const birthDate = new Date(parseInt(formData.get('birth-date')))
   const cv = formData.get('cv')
@@ -151,6 +152,7 @@ export async function action({ request, params }) {
       email,
       phoneNumber,
       marriageStatus,
+      khedmatStatus,
       recruitmentType,
       birthDate,
       category: {
@@ -283,6 +285,18 @@ export default function ApplicationForm() {
               <RadioGroup row name="marriage-status" defaultValue={0}>
                 <FormControlLabel value={0} control={<Radio />} label="مجرد" />
                 <FormControlLabel value={1} control={<Radio />} label="متأهل" />
+              </RadioGroup>
+            </FormControl>
+            <FormControl>
+              <FormLabel>وضعیت نظام وظیفه</FormLabel>
+              <RadioGroup row name="khedmat-status" defaultValue={0}>
+                <FormControlLabel value={0} control={<Radio />} label="معاف" />
+                <FormControlLabel
+                  value={1}
+                  control={<Radio />}
+                  label="پایان خدمت"
+                />
+                <FormControlLabel value={2} control={<Radio />} label="مشمول" />
               </RadioGroup>
             </FormControl>
             <FormControl>
