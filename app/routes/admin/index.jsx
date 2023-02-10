@@ -137,6 +137,8 @@ export default function Applications() {
             {
               field: 'اعمال',
               type: 'actions',
+              flex: 1,
+              minWidth: 300,
               getActions: ({ row }) => {
                 return [
                   <Button
@@ -165,7 +167,6 @@ export default function Applications() {
                   ),
                 ]
               },
-              flex: 1,
             },
           ]}
           rows={applications}
