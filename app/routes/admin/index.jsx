@@ -2,9 +2,6 @@ import { Form, useLoaderData, Link } from '@remix-run/react'
 import { prisma } from '~/db.server'
 import { DataGrid } from '@mui/x-data-grid'
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
   Button,
   Dialog,
   DialogActions,
@@ -13,6 +10,9 @@ import {
   Toolbar,
   Avatar,
   Box,
+  Grid,
+  TextField,
+  DialogContent,
 } from '@mui/material'
 import { useState } from 'react'
 
@@ -172,6 +172,7 @@ export default function Applications() {
           rows={applications}
         />
         <Dialog
+          maxWidth="md"
           open={dialogOpen}
           onClose={() => setDialogOpen(false)}
           fullWidth
@@ -180,12 +181,25 @@ export default function Applications() {
           <DialogTitle sx={{ borderBottom: 1, borderColor: 'divider' }}>
             پاسخ‌ها
           </DialogTitle>
-          {currentApplication?.answers.map(({ question, answer, id }) => (
-            <Accordion elevation={0} key={id}>
-              <AccordionSummary>{question}</AccordionSummary>
-              <AccordionDetails>{answer}</AccordionDetails>
-            </Accordion>
-          ))}
+          <DialogContent sx={{ pt: theme => `${theme.spacing(3)} !important` }}>
+            <Grid container gap={2}>
+              {currentApplication?.answers.map(({ question, answer, id }) => (
+                <Grid item xs={12} md={6} key={id}>
+                  <TextField
+                    variant="filled"
+                    multiline
+                    maxRows={3}
+                    value={answer}
+                    label={question}
+                    fullWidth
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                  />
+                </Grid>
+              ))}
+            </Grid>
+          </DialogContent>
           <DialogActions sx={{ borderTop: 1, borderColor: 'divider' }}>
             <Button onClick={() => setDialogOpen(false)}>بستن</Button>
           </DialogActions>
