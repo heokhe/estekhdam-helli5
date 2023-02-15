@@ -13,6 +13,8 @@ import {
   Grid,
   TextField,
   DialogContent,
+  Chip,
+  Tooltip,
 } from '@mui/material'
 import { useState } from 'react'
 
@@ -22,6 +24,15 @@ export async function loader() {
       answers: true,
       category: {
         include: {
+          parent: {
+            include: {
+              parent: {
+                include: {
+                  subcategories: true,
+                },
+              },
+            },
+          },
           data: {
             include: {
               questions: true,
@@ -75,15 +86,33 @@ export default function Applications() {
             borderBottom: 0,
             borderRadius: 0,
           }}
-          checkboxSelection
           disableSelectionOnClick
           columns={[
             {
+              field: 'position',
               headerName: 'موقعیت شغلی',
               valueGetter: ({ row }) => {
                 return row.category.title
               },
-              width: 200,
+              renderCell: ({ value, row }) => {
+                const list = []
+                for (let last = row.category; last; last = last.parent) {
+                  list.push(last)
+                }
+                return (
+                  <Tooltip
+                    title={list
+                      .reverse()
+                      .map(p => p.title)
+                      .join('/')}
+                  >
+                    <Chip label={value} />
+                  </Tooltip>
+                )
+              },
+              width: 125,
+              align: 'center',
+              headerAlign: 'center',
             },
             {
               field: 'imageAddress',
@@ -119,7 +148,15 @@ export default function Applications() {
             {
               field: 'phoneNumber',
               headerName: 'شماره تماس',
-              width: 170,
+              width: 125,
+            },
+            {
+              field: 'birthDate',
+              type: 'date',
+              headerName: 'تاریخ تولد',
+              width: 100,
+              valueFormatter: ({ value }) =>
+                new Date(value).toLocaleDateString('fa-IR'),
             },
             {
               field: 'email',
@@ -127,12 +164,23 @@ export default function Applications() {
               width: 170,
             },
             {
-              field: 'time',
-              type: 'dateTime',
-              headerName: 'زمان ارسال',
-              width: 200,
-              valueFormatter: ({ value }) =>
-                new Date(value).toLocaleString('fa-IR'),
+              field: 'khedmatType',
+              headerName: 'وضعیت نظام وظیفه',
+              width: 175,
+              valueGetter: ({ value }) =>
+                ['معاف', 'پایان خدمت', 'مشمول'][value],
+            },
+            {
+              field: 'marriageStatus',
+              headerName: 'وضعیت تأهل',
+              width: 125,
+              valueGetter: ({ value }) => ['مجرد', 'متأهل'][value],
+            },
+            {
+              field: 'recruitmentType',
+              headerName: 'نوع استخدام',
+              width: 125,
+              valueGetter: ({ value }) => ['رسمی', 'آزاد'][value],
             },
             {
               field: 'اعمال',
