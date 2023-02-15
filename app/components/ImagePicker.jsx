@@ -19,13 +19,24 @@ export function ImagePicker({ size, ...props }) {
   }
 
   return (
-    <>
+    <div style={{ position: 'relative' }}>
       <input
         {...props}
         type="file"
         accept="image/*"
         id={id}
-        style={{ display: 'none' }}
+        style={{
+          // We don't just set the display to none
+          // because we want the input to be present, but just hidden.
+          // This helps in showing errors for example.
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          width: size,
+          transform: 'translateX(-50%)',
+          opacity: 0,
+          pointerEvents: 'none',
+        }}
         onChange={handleChange}
       />
       <Tooltip
@@ -48,6 +59,6 @@ export function ImagePicker({ size, ...props }) {
           <AddAPhotoOutlined sx={{ fontSize: size * 0.4 }} />
         </Avatar>
       </Tooltip>
-    </>
+    </div>
   )
 }
