@@ -329,7 +329,8 @@ export default function ApplicationForm() {
             <Typography variant="caption" color="text.secondary">
               {!requiresCV
                 ? 'در صورت تمایل می‌توانید فایل رزومه خود را نیز ارسال کنید.'
-                : 'لطفا از بخش زیر فایل رزومه خود را نیز ضمیمه کنید.'}
+                : 'لطفا از بخش زیر فایل رزومه خود را نیز ضمیمه کنید.'}{' '}
+              (حداکثر ۵ مگابایت)
             </Typography>
             <input type="file" name="cv" accept=".pdf" required={requiresCV} />
           </Stack>
