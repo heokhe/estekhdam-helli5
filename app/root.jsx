@@ -25,6 +25,26 @@ export const links = () => [
     rel: 'stylesheet',
     href: styles,
   },
+  {
+    rel: 'icon',
+    href: '/icons/favicon-32.png',
+    sizes: '32x32',
+  },
+  {
+    rel: 'icon',
+    href: '/icons/favicon-57.png',
+    sizes: '57x57',
+  },
+  {
+    rel: 'icon',
+    href: '/icons/favicon-96.png',
+    sizes: '96x96',
+  },
+  {
+    rel: 'icon',
+    href: '/icons/favicon-128.png',
+    sizes: '128x128',
+  },
 ]
 
 export async function loader({ request }) {
