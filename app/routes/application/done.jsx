@@ -1,6 +1,12 @@
 import HandshakeOutlined from '@mui/icons-material/HandshakeOutlined'
 import OpenInNew from '@mui/icons-material/OpenInNew'
-import { Container, Link as MuiLink, styled, Typography } from '@mui/material'
+import {
+  Container,
+  Divider,
+  Link as MuiLink,
+  styled,
+  Typography,
+} from '@mui/material'
 
 const LinkIcon = styled(OpenInNew)(() => ({
   verticalAlign: 'middle',
@@ -23,13 +29,32 @@ export default function ApplicationDone() {
         گرفت.
       </Typography>
       <Container maxWidth="sm" sx={{ mt: 3 }}>
-        <MuiLink href="https://allamehelli5.ir" target="_blank">
-          وبسایت دبیرستان علامه حلی پنج
+        <Divider sx={{ mb: 3, maxWidth: 300, mx: 'auto' }} />
+        <Typography paragraph color="text.secondary">
+          برای آشنایی بیش‌تر ما با شما، حتماً تا قبل مصاحبه حضوری تست‌های زیر را
+          تکمیل کنید. این فرآیند نهایتاً نیم ساعت زمان خواهد برد.
+        </Typography>
+        <MuiLink
+          href="https://docs.google.com/forms/d/e/1FAIpQLSccvI38448uwrz6-eXYEHkipf8tZfBEvxlHSxqyib6QWZ48VQ/viewform?usp=sf_link"
+          target="_blank"
+        >
+          تست رغبت‌سنجی شغلی (هالند)
           <LinkIcon />
         </MuiLink>
         <br />
-        <MuiLink href="https://allamehelli5.ir" target="_blank">
-          وبسایت دبیرستان علامه حلی پنج
+        <MuiLink
+          href="https://docs.google.com/forms/d/1W53tuJcETWhn59Wxus_B9rwAlPDvdbVuuUrFB58Haw0"
+          target="_blank"
+        >
+          فرم شخصیت سه‌بعدی
+          <LinkIcon />
+        </MuiLink>
+        <br />
+        <MuiLink
+          href="https://docs.google.com/forms/d/1F67k9VKgk52Fgp3trk-r4nou_FnocoW-6PgySjxSD4g"
+          target="_blank"
+        >
+          فرم شخصیت پنج‌بعدی
           <LinkIcon />
         </MuiLink>
       </Container>
