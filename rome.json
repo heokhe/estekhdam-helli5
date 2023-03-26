@@ -1,0 +1,24 @@
+{
+  "formatter": {
+    "enabled": true,
+    "indentSize": 2,
+    "indentStyle": "space"
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "style": {
+        "noImplicitBoolean": "off"
+      },
+      "nursery": {
+        "useCamelCase": "error"
+      }
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single"
+    }
+  }
+}

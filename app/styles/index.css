@@ -1,0 +1,17 @@
+@font-face {
+  font-family: Estedad;
+  font-weight: 400;
+  src: url(./fonts/Estedad-Regular.woff2);
+}
+
+@font-face {
+  font-family: Estedad;
+  font-weight: 500;
+  src: url(./fonts/Estedad-SemiBold.woff2);
+}
+
+@font-face {
+  font-family: Estedad;
+  font-weight: 700;
+  src: url(./fonts/Estedad-Bold.woff2);
+}

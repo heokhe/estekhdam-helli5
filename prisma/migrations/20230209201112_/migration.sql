@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Application" ADD COLUMN "birthDate" DATETIME DEFAULT CURRENT_TIMESTAMP;

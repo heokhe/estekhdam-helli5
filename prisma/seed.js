@@ -1,53 +1,36 @@
-const { PrismaClient } = require("@prisma/client");
+const { PrismaClient } = require('@prisma/client')
 
-const bcrypt = require("bcryptjs").default;
+const bcrypt = require('bcryptjs')
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient()
 
 async function seed() {
-  const email = "rachel@remix.run";
+  const username = 'admin'
 
   // cleanup the existing database
-  await prisma.user.delete({ where: { email } }).catch(() => {
+  await prisma.admin.delete({ where: { username } }).catch(() => {
     // no worries if it doesn't exist yet
-  });
-  const hashedPassword = await bcrypt.hash("racheliscool", 10);
+  })
 
-  const user = await prisma.user.create({
+  const hashedPassword = await bcrypt.hash(
+    process.env.DEFAULT_ADMIN_PASSWORD,
+    10
+  )
+  await prisma.admin.create({
     data: {
-      email,
-      password: {
-        create: {
-          hash: hashedPassword,
-        },
-      },
+      username,
+      password: hashedPassword,
     },
-  });
+  })
 
-  await prisma.note.create({
-    data: {
-      title: "My first note",
-      body: "Hello, world!",
-      userId: user.id,
-    },
-  });
-
-  await prisma.note.create({
-    data: {
-      title: "My second note",
-      body: "Hello, world!",
-      userId: user.id,
-    },
-  });
-
-  console.log(`Database has been seeded. 🌱`);
+  console.log('Database has been seeded. 🌱')
 }
 
 seed()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
+  .catch(e => {
+    console.error(e)
+    process.exit(1)
   })
   .finally(async () => {
-    await prisma.$disconnect();
-  });
+    await prisma.$disconnect()
+  })

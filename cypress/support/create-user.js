@@ -4,38 +4,38 @@
 // and it will log out the cookie value you can use to interact with the server
 // as that new user.
 
-const { installGlobals } = require("@remix-run/node");
+const { installGlobals } = require('@remix-run/node')
 
-const { parse } = require("cookie");
+const { parse } = require('cookie')
 
-const { createUser } = require("~/models/user.server");
+const { createUser } = require('~/models/user.server')
 
-const { createUserSession } = require("~/session.server");
+const { createUserSession } = require('~/session.server')
 
-installGlobals();
+installGlobals()
 
 async function createAndLogin(email) {
   if (!email) {
-    throw new Error("email required for login");
+    throw new Error('email required for login')
   }
-  if (!email.endsWith("@example.com")) {
-    throw new Error("All test emails must end in @example.com");
+  if (!email.endsWith('@example.com')) {
+    throw new Error('All test emails must end in @example.com')
   }
 
-  const user = await createUser(email, "myreallystrongpassword");
+  const user = await createUser(email, 'myreallystrongpassword')
 
   const response = await createUserSession({
-    request: new Request("test://test"),
+    request: new Request('test://test'),
     userId: user.id,
     remember: false,
-    redirectTo: "/",
-  });
+    redirectTo: '/',
+  })
 
-  const cookieValue = response.headers.get("Set-Cookie");
+  const cookieValue = response.headers.get('Set-Cookie')
   if (!cookieValue) {
-    throw new Error("Cookie missing from createUserSession response");
+    throw new Error('Cookie missing from createUserSession response')
   }
-  const parsedCookie = parse(cookieValue);
+  const parsedCookie = parse(cookieValue)
   // we log it like this so our cypress command can parse it out and set it as
   // the cookie value.
   console.log(
@@ -44,7 +44,7 @@ async function createAndLogin(email) {
   ${parsedCookie.__session}
 </cookie>
   `.trim()
-  );
+  )
 }
 
-createAndLogin(process.argv[2]);
+createAndLogin(process.argv[2])

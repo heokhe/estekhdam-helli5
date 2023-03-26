@@ -1,7 +1,6 @@
-import path from "path";
-import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
-import { prisma } from "~/db.server";
-import { z } from "zod";
+import { Form, Link, useActionData, useLoaderData } from '@remix-run/react'
+import { prisma } from '~/db.server'
+import { z } from 'zod'
 import {
   Button,
   Container,
@@ -11,20 +10,29 @@ import {
   TextField,
   Stack,
   Breadcrumbs,
-} from "@mui/material";
-import ArrowForward from "@mui/icons-material/ArrowForward";
+  Grid,
+  FormControl,
+  FormLabel,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+} from '@mui/material'
+import ArrowForward from '@mui/icons-material/ArrowForward'
+import CheckCircleOutline from '@mui/icons-material/CheckCircleOutline'
 import {
   json,
   redirect,
   unstable_composeUploadHandlers,
   unstable_createMemoryUploadHandler,
   unstable_parseMultipartFormData,
-} from "@remix-run/server-runtime";
-import { unstable_createFileUploadHandler } from "@remix-run/node";
-import { useEffect } from "react";
+} from '@remix-run/server-runtime'
+import { unstable_createFileUploadHandler } from '@remix-run/node'
+import { useEffect } from 'react'
+import { ImagePicker } from '~/components/ImagePicker'
+import { NamedDatePicker } from '~/components/NamedDatePicker'
 
 export async function loader({ params }) {
-  const categoryId = parseInt(params.categoryId);
+  const categoryId = parseInt(params.categoryId)
   const category = await prisma.category.findUnique({
     where: { id: categoryId },
     include: {
@@ -36,24 +44,26 @@ export async function loader({ params }) {
         },
       },
     },
-  });
-  if (!category.data) {
-    throw redirect("/");
+  })
+  if (!category) {
+    throw new Response(undefined, { status: 404 })
   }
-  let temp = category;
-  const list = [category];
+  if (!category.data) {
+    throw redirect('/')
+  }
+  let temp = category
+  const list = [category]
   do {
-    temp = temp.parent;
+    temp = temp.parent
     if (temp) {
-      list.push(temp);
+      list.push(temp)
     }
-  } while (temp);
-  return [category, list.reverse()];
+  } while (temp)
+  return [category, list.reverse()]
 }
 
 export async function action({ request, params }) {
-  // const origin = request.headers.get("origin");
-  const categoryId = parseInt(params.categoryId);
+  const categoryId = parseInt(params.categoryId)
   const category = await prisma.category.findUnique({
     where: { id: categoryId },
     include: {
@@ -63,63 +73,77 @@ export async function action({ request, params }) {
         },
       },
     },
-  });
+  })
   if (!category) {
-    throw new Response(undefined, { status: 404 });
+    throw new Response(undefined, { status: 404 })
   }
 
   const uploadHandler = unstable_composeUploadHandlers(
     unstable_createFileUploadHandler({
       maxPartSize: 5_000_000,
-      filter: ({ contentType }) => contentType === "application/pdf",
-      directory: "public/cvs",
+      filter: ({ contentType }) => contentType === 'application/pdf',
+      directory: 'public/uploads',
       file: () => `cv-${Date.now()}.pdf`,
+    }),
+    unstable_createFileUploadHandler({
+      maxPartSize: 5_000_000,
+      filter: ({ contentType }) => contentType.startsWith('image/'),
+      directory: 'public/uploads',
+      file: ({ filename }) => `${Date.now()}-${filename}`,
     }),
     // parse everything else into memory
     unstable_createMemoryUploadHandler()
-  );
-  const formData = await unstable_parseMultipartFormData(
-    request,
-    uploadHandler
-  );
-  const name = formData.get("name");
-  const lastName = formData.get("lastName");
-  const email = formData.get("email");
-  const phoneNumber = formData.get("phoneNumber");
-  const cv = formData.get("cv");
+  )
+  const formData = await unstable_parseMultipartFormData(request, uploadHandler)
+  const name = formData.get('name')
+  const lastName = formData.get('lastName')
+  const email = formData.get('email')
+  const phoneNumber = formData.get('phoneNumber')
+  const marriageStatus = parseInt(formData.get('marriage-status'))
+  const khedmatStatus = parseInt(formData.get('khedmat-status'))
+  const recruitmentType = parseInt(formData.get('recruitment-type'))
+  const birthDate = new Date(parseInt(formData.get('birth-date')))
+  const cv = formData.get('cv')
+  const image = formData.get('image')
 
   try {
     z.object({
-      name: z.string().min(1, "نام نباید خالی باشد"),
-      lastName: z.string().min(1, "نام خانوادگی نباید خالی باشد"),
+      name: z.string().min(1, 'نام نباید خالی باشد'),
+      lastName: z.string().min(1, 'نام خانوادگی نباید خالی باشد'),
       email: z
         .string()
-        .email({ message: "آدرس ایمیل معتبر نیست" })
+        .email({ message: 'آدرس ایمیل معتبر نیست' })
         .or(z.string().max(0)),
-      phoneNumber: z.string(), // TODO
+      phoneNumber: z
+        .string()
+        .min(1, 'شماره تلفن اجباری است')
+        .length(11, 'شماره تلفن باید ۱۱ رقم باشد')
+        .regex(/^09\d{9}$/, 'شماره تلفن معتبر نیست'),
     }).parse({
       name,
       lastName,
       email,
       phoneNumber,
-    });
+    })
   } catch (error) {
-    throw json({ errors: error.issues }, { status: 400 });
+    throw json({ errors: error.issues }, { status: 400 })
   }
   if (!category.data.requiresCV && !cv.name) {
     throw json(
-      { errors: [{ message: "ارسال فایل رزومه الزامی است" }] },
+      { errors: [{ message: 'ارسال فایل رزومه الزامی است' }] },
       { status: 400 }
-    );
+    )
   }
-  // const cvRelativePath = path.relative(
-  //   path.resolve(__dirname, ".."),
-  //   cv.filepath
-  // );
+  if (!image.name) {
+    throw json(
+      { errors: [{ message: 'ارسال عکس پرسنلی الزامی است' }] },
+      { status: 400 }
+    )
+  }
 
-  const answerEntries = [...formData.entries("answer")].filter(([fieldName]) =>
-    fieldName.startsWith("answer-")
-  );
+  const answerEntries = [...formData.entries('answer')].filter(([fieldName]) =>
+    fieldName.startsWith('answer-')
+  )
 
   const application = await prisma.application.create({
     data: {
@@ -127,20 +151,32 @@ export async function action({ request, params }) {
       lastName,
       email,
       phoneNumber,
-      categoryId: category.id,
+      marriageStatus,
+      khedmatStatus,
+      recruitmentType,
+      birthDate,
+      category: {
+        connect: {
+          id: categoryId,
+        },
+      },
+      ...(cv.name && {
+        cvAddress: `/uploads/${cv.name}`,
+      }),
+      imageAddress: `/uploads/${image.name}`,
     },
-  });
+  })
 
   for (const question of category.data.questions) {
     const [, answerValue] =
       answerEntries.find(
         ([fieldName]) => fieldName === `answer-${question.id}`
-      ) ?? [];
+      ) ?? []
     if (!answerValue) {
       throw json(
         { errors: [{ message: `لطفاً به تمام سوالات پاسخ دهید` }] },
         { status: 400 }
-      );
+      )
     }
     await prisma.answer.create({
       data: {
@@ -156,30 +192,30 @@ export async function action({ request, params }) {
           },
         },
       },
-    });
+    })
   }
 
-  return redirect("/application/done");
+  return redirect('/application/done')
 }
 
 export default function ApplicationForm() {
   /** @type {Awaited<ReturnType<typeof loader>>} */
-  const [category, list] = useLoaderData();
-  const actionData = useActionData();
+  const [category, list] = useLoaderData()
+  const actionData = useActionData()
   useEffect(() => {
     if (actionData) {
-      console.log(actionData);
+      console.log(actionData)
     }
-  }, [actionData]);
-  const { requiresCv } = category.data;
+  }, [actionData])
+  const { requiresCV } = category.data
   return (
     <>
       <Toolbar
         sx={{
           borderBottom: 1,
-          borderColor: "divider",
-          maxWidth: "sm",
-          mx: "auto",
+          borderColor: 'divider',
+          maxWidth: 'sm',
+          mx: 'auto',
         }}
       >
         <IconButton edge="start" component={Link} to="/" sx={{ mr: 2 }}>
@@ -190,7 +226,7 @@ export default function ApplicationForm() {
       <Container maxWidth="xs">
         <Form method="post" encType="multipart/form-data">
           <Breadcrumbs sx={{ my: 4 }}>
-            {list.map((l) => (
+            {list.map(l => (
               <span key={l.id} href="/">
                 {l.title}
               </span>
@@ -199,12 +235,30 @@ export default function ApplicationForm() {
           <Stack gap={2}>
             <Typography variant="h5">مشخصات فردی</Typography>
             <Stack direction="row" gap={1}>
-              <TextField name="name" label="نام" variant="filled" />
-              <TextField
-                name="lastName"
-                label="نام خانوادگی"
-                variant="filled"
-              />
+              <Grid container gap={2} flexWrap="nowrap" alignItems="center">
+                <Grid item xs="auto" sx={{ textAlign: 'center' }}>
+                  <ImagePicker required size={64} name="image" />
+                  <Typography variant="caption" color="text.secondary">
+                    عکس پرسنلی (حداکثر ۵ مگابایت)
+                  </Typography>
+                </Grid>
+                <Grid item xs={12}>
+                  <Stack gap={2}>
+                    <TextField
+                      name="name"
+                      label="نام"
+                      variant="filled"
+                      required
+                    />
+                    <TextField
+                      name="lastName"
+                      label="نام خانوادگی"
+                      variant="filled"
+                      required
+                    />
+                  </Stack>
+                </Grid>
+              </Grid>
             </Stack>
             <TextField
               label="آدرس ایمیل"
@@ -214,14 +268,52 @@ export default function ApplicationForm() {
             />
             <TextField
               label="شماره تماس"
+              type="tel"
+              pattern="^09\d{9}$"
               variant="filled"
               name="phoneNumber"
-              type="email"
+              required
             />
+            <NamedDatePicker
+              variant="filled"
+              label="تاریخ تولد"
+              name="birth-date"
+              required
+            />
+            <FormControl>
+              <FormLabel>وضعیت تأهل</FormLabel>
+              <RadioGroup row name="marriage-status" defaultValue={0}>
+                <FormControlLabel value={0} control={<Radio />} label="مجرد" />
+                <FormControlLabel value={1} control={<Radio />} label="متأهل" />
+              </RadioGroup>
+            </FormControl>
+            <FormControl>
+              <FormLabel>وضعیت نظام وظیفه</FormLabel>
+              <RadioGroup row name="khedmat-status" defaultValue={0}>
+                <FormControlLabel value={0} control={<Radio />} label="معاف" />
+                <FormControlLabel
+                  value={1}
+                  control={<Radio />}
+                  label="پایان خدمت"
+                />
+                <FormControlLabel value={2} control={<Radio />} label="مشمول" />
+              </RadioGroup>
+            </FormControl>
+            <FormControl>
+              <FormLabel>نوع استخدام</FormLabel>
+              <RadioGroup row name="recruitment-type" defaultValue={0}>
+                <FormControlLabel
+                  value={0}
+                  control={<Radio />}
+                  label="رسمی - پیمانی"
+                />
+                <FormControlLabel value={1} control={<Radio />} label="آزاد" />
+              </RadioGroup>
+            </FormControl>
           </Stack>
           <Stack gap={2} sx={{ mt: 4 }}>
             <Typography variant="h5">سوالات مربوط به حوزه کاری</Typography>
-            {category.data.questions.map((question) => (
+            {category.data.questions.map(question => (
               <TextField
                 multiline
                 minRows={3}
@@ -229,28 +321,31 @@ export default function ApplicationForm() {
                 label={question.title}
                 variant="filled"
                 name={`answer-${question.id}`}
+                required
               />
             ))}
           </Stack>
           <Stack gap={1} sx={{ mt: 2 }}>
             <Typography variant="caption" color="text.secondary">
-              {!requiresCv
-                ? "در صورت تمایل می‌توانید فایل رزومه خود را نیز ارسال کنید."
-                : "لطفا از بخش زیر فایل رزومه خود را نیز ضمیمه کنید."}
+              {!requiresCV
+                ? 'در صورت تمایل می‌توانید فایل رزومه خود را نیز ارسال کنید.'
+                : 'لطفا از بخش زیر فایل رزومه خود را نیز ضمیمه کنید.'}{' '}
+              (حداکثر ۵ مگابایت)
             </Typography>
-            <input type="file" name="cv" accept=".pdf" required={requiresCv} />
+            <input type="file" name="cv" accept=".pdf" required={requiresCV} />
           </Stack>
           <Button
-            sx={{ mx: "auto", mt: 3, display: "block" }}
+            sx={{ mx: 'auto', my: 3, display: 'flex' }}
             type="submit"
             variant="contained"
             disableElevation
             size="large"
+            startIcon={<CheckCircleOutline />}
           >
             ثبت درخواست استخدام
           </Button>
         </Form>
       </Container>
     </>
-  );
+  )
 }
